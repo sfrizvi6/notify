@@ -65,9 +65,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     private void toggleDetailCardView(@NonNull NotificationViewHolder holder) {
+        String text = (String) holder.notificationTextLines.getText();
         holder.notificationTextLines.setVisibility(holder.notificationTextLines.getVisibility() == View.VISIBLE
                                                    ? View.GONE
-                                                   : View.VISIBLE);
+                                                   : text != null && text.length() > 0 ? View.VISIBLE : View.GONE);
     }
 
     @Override
