@@ -2,34 +2,40 @@ package com.example.android.notify;
 
 import android.content.Context;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 public class NotificationItemModel {
 
+    private static final String TAG = NotificationItemModel.class.getSimpleName();
+
     String id;
-    int imageId;
+    String appName;
+    int appIcon;
     String packageName;
     String title;
     String text;
-    String imageUrl;
     String timestamp;
+    String textLines;
 
     public NotificationItemModel(Context context,
                                  String id,
-                                 int imageId,
+                                 String appName,
+                                 int appIcon,
                                  String packageName,
                                  String title,
                                  String text,
-                                 String imageUrl,
-                                 long timestamp) {
+                                 long timestamp,
+                                 String textLines) {
         if (id == null) {
-            throw new IllegalArgumentException("Notification data is incomplete!");
+            Log.e(TAG, "Notification data is incomplete!");
         }
         this.id = id;
-        this.imageId = imageId;
+        this.appName = appName;
+        this.appIcon = appIcon;
         this.packageName = packageName;
         this.title = title;
         this.text = text;
-        this.imageUrl = imageUrl;
         this.timestamp = DateUtils.formatDateTime(context, timestamp, DateUtils.FORMAT_SHOW_TIME);
+        this.textLines = textLines;
     }
 }

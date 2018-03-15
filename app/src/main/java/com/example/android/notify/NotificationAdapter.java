@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,28 +29,45 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         this.notificationList = notificationList;
     }
 
+    @NonNull
     @Override
-    public NotificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         return new NotificationViewHolder(LayoutInflater.from(parent.getContext())
                                                         .inflate(R.layout.notification_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(NotificationViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final NotificationViewHolder holder, int position) {
         NotificationItemModel notificationItemModel = notificationList.get(position);
         try {
             Resources res =
                 context.getPackageManager().getResourcesForApplication(notificationItemModel.packageName);
-            Drawable icon = res.getDrawable(notificationItemModel.imageId);
+            Drawable icon = res.getDrawable(notificationItemModel.appIcon);
             holder.notificationImage.setImageDrawable(icon);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, e.getMessage());
         }
-        holder.notificationPackageName.setText(notificationItemModel.packageName);
+        holder.notificationCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleDetailCardView(holder);
+            }
+        });
+        holder.notificationPackageName.setText(notificationItemModel.appName);
         holder.notificationTitle.setText(notificationItemModel.title);
         holder.notificationText.setText(notificationItemModel.text);
         holder.notificationCard.setCardBackgroundColor(Color.LTGRAY);
+        holder.notificationTimestamp.setText(notificationItemModel.timestamp);
+        if (notificationItemModel.textLines != null && notificationItemModel.textLines.length() > 0) {
+            holder.notificationTextLines.setText(notificationItemModel.textLines);
+        }
+    }
+
+    private void toggleDetailCardView(@NonNull NotificationViewHolder holder) {
+        holder.notificationTextLines.setVisibility(holder.notificationTextLines.getVisibility() == View.VISIBLE
+                                                   ? View.GONE
+                                                   : View.VISIBLE);
     }
 
     @Override
@@ -64,6 +82,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         TextView notificationPackageName;
         TextView notificationTitle;
         TextView notificationText;
+        TextView notificationTimestamp;
+        TextView notificationTextLines;
 
         NotificationViewHolder(View itemView) {
             super(itemView);
@@ -72,6 +92,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             notificationPackageName = itemView.findViewById(R.id.notification_package_name);
             notificationTitle = itemView.findViewById(R.id.notification_title);
             notificationText = itemView.findViewById(R.id.notification_text);
+            notificationTimestamp = itemView.findViewById(R.id.notification_timestamp);
+            notificationTextLines = itemView.findViewById(R.id.notification_text_lines);
         }
     }
 }

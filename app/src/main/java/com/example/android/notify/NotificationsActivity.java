@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
@@ -69,17 +71,28 @@ public class NotificationsActivity extends AppCompatActivity {
             if (packageName == null || packageName.equals("")) {
                 return;
             }
+            ApplicationInfo appInfo = (ApplicationInfo) extras.get("android.appInfo");
+            PackageManager packageManager = getApplicationContext().getPackageManager();
+            String appName = packageManager.getApplicationLabel(appInfo).toString();
             String title = extras.getString("android.title");
             String text = extras.getString("android.text");
+            CharSequence[] textLines = (CharSequence[]) extras.get("android.textLines");
+            StringBuilder textLinesString = new StringBuilder();
+            if (textLines != null) {
+                for (int i = 0; i < textLines.length; i++) {
+                    textLinesString.append(textLines[i]).append(i < textLines.length - 1 ? "\n" : "");
+                }
+            }
             int icon = extras.getInt("android.icon");
             NotificationItemModel notificationItemModel =
                 new NotificationItemModel(context, String.valueOf(statusBarNotification.getId()),
+                                          appName,
                                           icon,
                                           packageName,
                                           title,
                                           text,
-                                          null,
-                                          statusBarNotification.getPostTime());
+                                          statusBarNotification.getPostTime(),
+                                          textLinesString.toString());
             data.add(notificationItemModel);
             adapter.notifyDataSetChanged();
         }
