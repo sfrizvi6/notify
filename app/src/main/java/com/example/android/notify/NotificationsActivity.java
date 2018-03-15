@@ -39,9 +39,6 @@ public class NotificationsActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction("notification_created");
         registerReceiver(notificationReceiver, filter);
-
-        Intent intent = new Intent(this, NotifyListenerService.class);
-        this.startService(intent);
     }
 
     public void createNotification(View v) {
