@@ -9,6 +9,12 @@ public class NotifyListenerService extends android.service.notification.Notifica
     private String TAG = this.getClass().getSimpleName();
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.i(TAG, "Service created");
+    }
+
+    @Override
     public void onNotificationPosted(StatusBarNotification statusBarNotification) {
         if (statusBarNotification == null) {
             return;
