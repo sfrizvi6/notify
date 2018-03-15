@@ -16,14 +16,11 @@ public class NotifyListenerService extends android.service.notification.Notifica
     }
 
     @Override
-<<<<<<< HEAD
-=======
     public IBinder onBind(Intent intent) {
         return super.onBind(intent);
     }
 
     @Override
->>>>>>> mvp
     public void onNotificationPosted(StatusBarNotification statusBarNotification) {
         if (statusBarNotification == null) {
             return;
