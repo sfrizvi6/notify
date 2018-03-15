@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Notify</string>
     <string name="create_notification_btn_label">Create Notification</string>
+
+    <!--Content Descriptors-->
+    <string name="app_icon_content_description">App notification icon</string>
 </resources>
