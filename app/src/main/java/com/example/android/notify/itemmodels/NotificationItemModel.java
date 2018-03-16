@@ -1,5 +1,6 @@
 package com.example.android.notify.itemmodels;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.util.Log;
 import com.example.android.notify.adapters.NotificationSubAdapter;
@@ -20,11 +21,23 @@ public class NotificationItemModel extends NotificationSubItemModel {
                                  int appIcon,
                                  String packageName,
                                  String groupKey,
+                                 PendingIntent pendingIntent,
                                  String title,
                                  String text,
                                  String timestamp,
                                  String textLines) {
-        super(context, id, appName, appIcon, null, packageName, groupKey, title, text, timestamp, textLines);
+        super(context,
+              id,
+              appName,
+              appIcon,
+              null,
+              packageName,
+              pendingIntent,
+              groupKey,
+              title,
+              text,
+              timestamp,
+              textLines);
         subData = new ArrayList<>();
         subAdapter = new NotificationSubAdapter(subData);
     }
@@ -36,6 +49,7 @@ public class NotificationItemModel extends NotificationSubItemModel {
               notificationSubItemModel.appIcon,
               notificationSubItemModel.largeIcon,
               notificationSubItemModel.packageName,
+              notificationSubItemModel.pendingIntent,
               notificationSubItemModel.groupKey,
               notificationSubItemModel.getTitle(),
               notificationSubItemModel.getText(),

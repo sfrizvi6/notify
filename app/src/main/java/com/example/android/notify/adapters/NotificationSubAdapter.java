@@ -1,11 +1,13 @@
 package com.example.android.notify.adapters;
 
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,8 @@ import com.example.android.notify.itemmodels.NotificationSubItemModel;
 import java.util.List;
 
 public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSubAdapter.NotificationViewHolder> {
+
+    private static final String TAG = NotificationSubAdapter.class.getSimpleName();
 
     private List<NotificationSubItemModel> notificationList;
     private Context context;
@@ -35,14 +39,14 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
 
     @Override
     public void onBindViewHolder(@NonNull final NotificationViewHolder holder, int position) {
-        NotificationSubItemModel notificationItemModel = notificationList.get(position);
+        final NotificationSubItemModel notificationItemModel = notificationList.get(position);
         if (notificationItemModel.largeIcon != null) {
             holder.notificationImage.setImageBitmap(notificationItemModel.largeIcon);
         }
         holder.notificationCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deepLinkToApp(holder);
+                deepLinkToApp(notificationItemModel);
             }
         });
         holder.notificationTitle.setText(notificationItemModel.getTitle());
@@ -56,8 +60,12 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
                                                    : View.VISIBLE);
     }
 
-    private void deepLinkToApp(@NonNull NotificationViewHolder holder) {
-        // TODO: deeplink here
+    private void deepLinkToApp(@NonNull final NotificationSubItemModel notificationSubItemModel) {
+        try {
+            notificationSubItemModel.pendingIntent.send();
+        } catch (PendingIntent.CanceledException e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     @Override

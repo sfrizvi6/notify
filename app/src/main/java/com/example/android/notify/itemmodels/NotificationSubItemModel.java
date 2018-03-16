@@ -1,5 +1,6 @@
 package com.example.android.notify.itemmodels;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -13,6 +14,7 @@ public class NotificationSubItemModel {
     public final int appIcon;
     public final Bitmap largeIcon;
     public final String packageName;
+    public final PendingIntent pendingIntent;
     public final String groupKey;
     private String title;
     private String text;
@@ -57,6 +59,7 @@ public class NotificationSubItemModel {
                                     int appIcon,
                                     Bitmap largeIcon,
                                     String packageName,
+                                    PendingIntent pendingIntent,
                                     String groupKey,
                                     String title,
                                     String text,
@@ -68,6 +71,7 @@ public class NotificationSubItemModel {
         this.appIcon = appIcon;
         this.largeIcon = largeIcon;
         this.packageName = packageName;
+        this.pendingIntent = pendingIntent;
         this.groupKey = groupKey;
         this.title = title;
         this.text = text;

@@ -90,7 +90,7 @@ public class NotificationsActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             StatusBarNotification statusBarNotification =
-                (StatusBarNotification) intent.getExtras().get("notification_created_event");
+                (StatusBarNotification) intent.getExtras().get("com.example.notify.notification_created_event");
             if (statusBarNotification == null) {
                 return;
             }
@@ -105,9 +105,11 @@ public class NotificationsActivity extends AppCompatActivity {
             ApplicationInfo appInfo = (ApplicationInfo) extras.get("android.appInfo");
             PackageManager packageManager = getApplicationContext().getPackageManager();
             String appName = packageManager.getApplicationLabel(appInfo).toString();
+            PendingIntent deepLinkIntent = statusBarNotification.getNotification().contentIntent;
             String title = extras.getString("android.title");
             String text = extras.getString("android.text");
             CharSequence[] textLines = (CharSequence[]) extras.get("android.textLines");
+
             StringBuilder textLinesString = new StringBuilder();
             if (textLines != null) {
                 for (int i = 0; i < textLines.length; i++) {
@@ -122,6 +124,7 @@ public class NotificationsActivity extends AppCompatActivity {
                                              icon,
                                              largeIcon,
                                              packageName,
+                                             deepLinkIntent,
                                              groupKey,
                                              title,
                                              text,
