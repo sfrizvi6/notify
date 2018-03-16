@@ -30,13 +30,9 @@ public class NotificationsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 
-        data = new ArrayList<>();
-
         notificationReceiver = new NotificationReceiver();
-        adapter = new NotificationAdapter(data);
-        notificationsRecyclerView = findViewById(R.id.notification_list);
-        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        notificationsRecyclerView.setAdapter(adapter);
+
+        initNotificationListRecyclerView();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("notification_created");
@@ -54,6 +50,14 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationCompatBuilder.setSmallIcon(R.drawable.ic_launcher_background);
         notificationCompatBuilder.setAutoCancel(true);
         notificationManager.notify((int) System.currentTimeMillis(), notificationCompatBuilder.build());
+    }
+
+    private void initNotificationListRecyclerView() {
+        data = new ArrayList<>();
+        adapter = new NotificationAdapter(data);
+        notificationsRecyclerView = findViewById(R.id.notification_list);
+        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        notificationsRecyclerView.setAdapter(adapter);
     }
 
     class NotificationReceiver extends BroadcastReceiver {
@@ -93,7 +97,15 @@ public class NotificationsActivity extends AppCompatActivity {
                                           text,
                                           statusBarNotification.getPostTime(),
                                           textLinesString.toString());
+            if (!updateNotificationSubCardIfNotificationPackageExists(notificationItemModel)) {
+                if (!updateNotificationCardIfExists(notificationItemModel)) {
+                    data.add(0, notificationItemModel);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
 
+        private boolean updateNotificationCardIfExists(NotificationItemModel notificationItemModel) {
             // go through the list to see if the notification with that ID already exists
             // if so, update that notification to position 0
             int position = -1;
@@ -104,9 +116,31 @@ public class NotificationsActivity extends AppCompatActivity {
             }
             if (position >= 0 && position < data.size()) {
                 data.remove(position);
+                data.add(0, notificationItemModel);
+                adapter.notifyDataSetChanged();
+                return true;
             }
-            data.add(0, notificationItemModel);
-            adapter.notifyDataSetChanged();
+            return false;
+        }
+
+        private boolean updateNotificationSubCardIfNotificationPackageExists(NotificationItemModel notificationItemModel) {
+            // go through the list to see if the notification with that packageName already exists
+            // if so, update that notification to position 0
+            int position = -1;
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i).packageName.equals(notificationItemModel.packageName)) {
+                    position = i;
+                }
+            }
+            if (position >= 0 && position < data.size()) {
+                NotificationItemModel existingNotificationItemModel = data.get(position);
+                existingNotificationItemModel.addSubNotificationData(notificationItemModel);
+                data.remove(position);
+                data.add(0, existingNotificationItemModel);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+            return false;
         }
     }
 }
