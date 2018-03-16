@@ -85,7 +85,7 @@ public class NotificationsActivity extends AppCompatActivity {
             }
             int icon = extras.getInt("android.icon");
             NotificationItemModel notificationItemModel =
-                new NotificationItemModel(context, String.valueOf(statusBarNotification.getId()),
+                new NotificationItemModel(context, statusBarNotification.getId(),
                                           appName,
                                           icon,
                                           packageName,
@@ -93,6 +93,18 @@ public class NotificationsActivity extends AppCompatActivity {
                                           text,
                                           statusBarNotification.getPostTime(),
                                           textLinesString.toString());
+
+            // go through the list to see if the notification with that ID already exists
+            // if so, update that notification to position 0
+            int position = -1;
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i).id == notificationItemModel.id) {
+                    position = i;
+                }
+            }
+            if (position >= 0 && position < data.size()) {
+                data.remove(position);
+            }
             data.add(0, notificationItemModel);
             adapter.notifyDataSetChanged();
         }
