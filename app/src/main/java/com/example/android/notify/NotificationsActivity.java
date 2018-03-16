@@ -9,6 +9,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -43,6 +44,8 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationReceiver = new NotificationReceiver();
 
         initNotificationListRecyclerView();
+
+        startService(new Intent(this, NotificationListenerService.class));
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("notification_created");
@@ -178,7 +181,8 @@ public class NotificationsActivity extends AppCompatActivity {
             return NotificationUpdateState.NEW_PARENT_NOTIFICATION_ADDED;
         }
 
-        private void updateNotificationFields(NotificationSubItemModel existingNotification, NotificationSubItemModel incomingNotification) {
+        private void updateNotificationFields(NotificationSubItemModel existingNotification,
+                                              NotificationSubItemModel incomingNotification) {
             existingNotification.setTitle(incomingNotification.getTitle());
             existingNotification.setText(incomingNotification.getText());
             existingNotification.setTextLines(incomingNotification.getTextLines());

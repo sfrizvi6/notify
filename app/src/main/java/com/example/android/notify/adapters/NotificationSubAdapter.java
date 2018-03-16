@@ -51,7 +51,9 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
         holder.notificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
         holder.notificationTextLines.setText(textLines == null ? "" : textLines);
-        holder.notificationTextLines.setVisibility(textLines == null ? View.GONE : View.VISIBLE);
+        holder.notificationTextLines.setVisibility(textLines == null || textLines.equals("")
+                                                   ? View.GONE
+                                                   : View.VISIBLE);
     }
 
     private void deepLinkToApp(@NonNull NotificationViewHolder holder) {
