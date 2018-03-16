@@ -13,6 +13,7 @@ public class NotificationSubItemModel {
     public final int appIcon;
     public final Bitmap largeIcon;
     public final String packageName;
+    public final String groupKey;
     private String title;
     private String text;
     private String timestamp;
@@ -56,6 +57,7 @@ public class NotificationSubItemModel {
                                     int appIcon,
                                     Bitmap largeIcon,
                                     String packageName,
+                                    String groupKey,
                                     String title,
                                     String text,
                                     String timestamp,
@@ -66,6 +68,7 @@ public class NotificationSubItemModel {
         this.appIcon = appIcon;
         this.largeIcon = largeIcon;
         this.packageName = packageName;
+        this.groupKey = groupKey;
         this.title = title;
         this.text = text;
         this.timestamp = timestamp;

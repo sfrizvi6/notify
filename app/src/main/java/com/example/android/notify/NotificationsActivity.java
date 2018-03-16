@@ -91,6 +91,8 @@ public class NotificationsActivity extends AppCompatActivity {
             if (packageName == null || packageName.equals("")) {
                 return;
             }
+
+            String groupKey = statusBarNotification.getGroupKey();
             ApplicationInfo appInfo = (ApplicationInfo) extras.get("android.appInfo");
             PackageManager packageManager = getApplicationContext().getPackageManager();
             String appName = packageManager.getApplicationLabel(appInfo).toString();
@@ -111,6 +113,7 @@ public class NotificationsActivity extends AppCompatActivity {
                                              icon,
                                              largeIcon,
                                              packageName,
+                                             groupKey,
                                              title,
                                              text,
                                              DateUtils.formatDateTime(context,
@@ -121,10 +124,10 @@ public class NotificationsActivity extends AppCompatActivity {
         }
 
         private NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
-            // go through the list to see if the notification with that packageName already exists
+            // go through the list to see if the notification with that groupKey already exists
             // if so, update that notification to position 0
             for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).packageName.equals(incomingNotification.packageName)) {
+                if (data.get(i).groupKey.equals(incomingNotification.groupKey)) {
                     int position = i;
                     NotificationItemModel existingNotification = data.get(position);
 
