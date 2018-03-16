@@ -117,57 +117,55 @@ public class NotificationsActivity extends AppCompatActivity {
         private NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
             // go through the list to see if the notification with that packageName already exists
             // if so, update that notification to position 0
-            int position = -1;
             for (int i = 0; i < data.size(); i++) {
                 if (data.get(i).packageName.equals(incomingNotification.packageName)) {
-                    position = i;
-                }
-            }
-            if (position >= 0 && position < data.size()) {
-                NotificationItemModel existingNotification = data.get(position);
+                    int position = i;
+                    NotificationItemModel existingNotification = data.get(position);
 
-                // also check if the parent notification is the same id
-                // if so update the relevant fields of parent notification
-                // and then update the position of the parent notification in the adapter
-                if (existingNotification.id == incomingNotification.id) {
-                    existingNotification.setTitle(incomingNotification.getTitle());
-                    existingNotification.setText(incomingNotification.getText());
-                    existingNotification.setTextLines(incomingNotification.getTextLines());
+                    // also check if the parent notification is the same id
+                    // if so update the relevant fields of parent notification
+                    // and then update the position of the parent notification in the adapter
+                    if (existingNotification.id == incomingNotification.id) {
+                        updateNotificationFields(existingNotification, incomingNotification);
+                        data.remove(position);
+                        data.add(0, existingNotification);
+                        adapter.notifyDataSetChanged();
+                        return NotificationUpdateState.PARENT_NOTIFICATION_UPDATED;
+                    }
+
+                    // if the incoming notification is not the same ID as parent notification
+                    // check if it is one of the sub-notifications
+                    List<NotificationSubItemModel> subData = existingNotification.getSubData();
+                    for (int j = 0; j < subData.size(); j++) {
+                        if (subData.get(j).id == incomingNotification.id) {
+                            int subPosition = j;
+                            NotificationSubItemModel existingSubNotification = subData.get(subPosition);
+
+                            // if notification already exists then update the relevant fields
+                            // and then update the subPosition of the sub-notification in the adapter
+                            updateNotificationFields(existingSubNotification, incomingNotification);
+                            subData.remove(subPosition);
+                            subData.add(0, existingSubNotification);
+                            existingNotification.getSubAdapter().notifyDataSetChanged();
+
+                            // now update the parent notification's timestamp and location in adapter
+                            existingNotification.setTimestamp(incomingNotification.getTimestamp());
+                            data.remove(position);
+                            data.add(0, existingNotification);
+                            adapter.notifyDataSetChanged();
+                            return NotificationUpdateState.SUB_NOTIFICATION_UPDATED;
+                        }
+                    }
+
+                    // if incoming notification's parent notification exists but sub-notification doesn't
+                    // add notification to existingNotification's sub-notification list
+                    existingNotification.addSubNotificationData(incomingNotification);
                     existingNotification.setTimestamp(incomingNotification.getTimestamp());
                     data.remove(position);
                     data.add(0, existingNotification);
                     adapter.notifyDataSetChanged();
-                    return NotificationUpdateState.PARENT_NOTIFICATION_UPDATED;
+                    return NotificationUpdateState.NEW_SUB_NOTIFICATION_ADDED;
                 }
-
-                // if the incoming notification is not the same ID as parent notification
-                // check if it is one of the sub-notifications
-                List<NotificationSubItemModel> subData = existingNotification.getSubData();
-                for (int i = 0; i < subData.size(); i++) {
-                    if (subData.get(i).id == incomingNotification.id) {
-                        NotificationSubItemModel existingSubNotification = subData.get(position);
-
-                        // if notification already exists then update the relevant fields
-                        // and then update the position of the sub-notification in the adapter
-                        existingSubNotification.setTitle(incomingNotification.getTitle());
-                        existingSubNotification.setText(incomingNotification.getText());
-                        existingSubNotification.setTextLines(incomingNotification.getTextLines());
-                        existingSubNotification.setTimestamp(incomingNotification.getTimestamp());
-                        subData.remove(position);
-                        subData.add(0, existingSubNotification);
-                        existingNotification.getSubAdapter().notifyDataSetChanged();
-                        adapter.notifyDataSetChanged();
-                        return NotificationUpdateState.SUB_NOTIFICATION_UPDATED;
-                    }
-                }
-
-                // if incoming notification's parent notification exists but sub-notification doesn't
-                // add notification to existingNotification's sub-notification list
-                existingNotification.addSubNotificationData(incomingNotification);
-                data.remove(position);
-                data.add(0, existingNotification);
-                adapter.notifyDataSetChanged();
-                return NotificationUpdateState.NEW_SUB_NOTIFICATION_ADDED;
             }
 
             // if neither parent nor sub-notification exists
@@ -176,6 +174,13 @@ public class NotificationsActivity extends AppCompatActivity {
             data.add(0, newNotification);
             adapter.notifyDataSetChanged();
             return NotificationUpdateState.NEW_PARENT_NOTIFICATION_ADDED;
+        }
+
+        private void updateNotificationFields(NotificationSubItemModel existingNotification, NotificationSubItemModel incomingNotification) {
+            existingNotification.setTitle(incomingNotification.getTitle());
+            existingNotification.setText(incomingNotification.getText());
+            existingNotification.setTextLines(incomingNotification.getTextLines());
+            existingNotification.setTimestamp(incomingNotification.getTimestamp());
         }
     }
 }
