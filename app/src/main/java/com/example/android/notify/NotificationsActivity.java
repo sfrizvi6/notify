@@ -35,7 +35,7 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationReceiver = new NotificationReceiver();
         adapter = new NotificationAdapter(data);
         notificationsRecyclerView = findViewById(R.id.notification_list);
-        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         notificationsRecyclerView.setAdapter(adapter);
 
         IntentFilter filter = new IntentFilter();
@@ -93,7 +93,7 @@ public class NotificationsActivity extends AppCompatActivity {
                                           text,
                                           statusBarNotification.getPostTime(),
                                           textLinesString.toString());
-            data.add(notificationItemModel);
+            data.add(0, notificationItemModel);
             adapter.notifyDataSetChanged();
         }
     }
