@@ -1,6 +1,7 @@
 package com.example.android.notify;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -65,6 +66,14 @@ public class NotificationsActivity extends AppCompatActivity {
         notificationCompatBuilder.setContentText("Content for Test Notification");
         notificationCompatBuilder.setSmallIcon(R.drawable.ic_launcher_background);
         notificationCompatBuilder.setAutoCancel(true);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                                                                0,
+                                                                new Intent(this, NotificationsActivity.class),
+                                                                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        notificationCompatBuilder.setContentIntent(contentIntent);
         notificationManager.notify((int) System.currentTimeMillis(), notificationCompatBuilder.build());
     }
 
