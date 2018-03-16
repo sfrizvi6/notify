@@ -22,10 +22,10 @@ import static android.content.ContentValues.TAG;
 
 public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSubAdapter.NotificationViewHolder> {
 
-    private List<NotificationItemModel> notificationList;
+    private List<NotificationSubItemModel> notificationList;
     private Context context;
 
-    NotificationSubAdapter(List<NotificationItemModel> notificationList) {
+    NotificationSubAdapter(List<NotificationSubItemModel> notificationList) {
         this.notificationList = notificationList;
     }
 
@@ -39,7 +39,7 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
 
     @Override
     public void onBindViewHolder(@NonNull final NotificationViewHolder holder, int position) {
-        NotificationItemModel notificationItemModel = notificationList.get(position);
+        NotificationSubItemModel notificationItemModel = notificationList.get(position);
         try {
             Resources res =
                 context.getPackageManager().getResourcesForApplication(notificationItemModel.packageName);

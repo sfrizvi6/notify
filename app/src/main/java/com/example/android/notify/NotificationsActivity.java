@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -88,42 +89,44 @@ public class NotificationsActivity extends AppCompatActivity {
                 }
             }
             int icon = extras.getInt("android.icon");
-            NotificationItemModel notificationItemModel =
-                new NotificationItemModel(context, statusBarNotification.getId(),
-                                          appName,
-                                          icon,
-                                          packageName,
-                                          title,
-                                          text,
-                                          statusBarNotification.getPostTime(),
-                                          textLinesString.toString());
+            NotificationSubItemModel notificationItemModel =
+                new NotificationSubItemModel(context, statusBarNotification.getId(),
+                                             appName,
+                                             icon,
+                                             packageName,
+                                             title,
+                                             text,
+                                             DateUtils.formatDateTime(context,
+                                                                      statusBarNotification.getPostTime(),
+                                                                      DateUtils.FORMAT_SHOW_TIME),
+                                             textLinesString.toString());
             if (!updateNotificationSubCardIfNotificationPackageExists(notificationItemModel)) {
                 if (!updateNotificationCardIfExists(notificationItemModel)) {
-                    data.add(0, notificationItemModel);
+                    data.add(0, new NotificationItemModel(notificationItemModel));
                     adapter.notifyDataSetChanged();
                 }
             }
         }
 
-        private boolean updateNotificationCardIfExists(NotificationItemModel notificationItemModel) {
+        private boolean updateNotificationCardIfExists(NotificationSubItemModel notificationSubItemModel) {
             // go through the list to see if the notification with that ID already exists
             // if so, update that notification to position 0
             int position = -1;
             for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).id == notificationItemModel.id) {
+                if (data.get(i).id == notificationSubItemModel.id) {
                     position = i;
                 }
             }
             if (position >= 0 && position < data.size()) {
                 data.remove(position);
-                data.add(0, notificationItemModel);
+                data.add(0, new NotificationItemModel(notificationSubItemModel));
                 adapter.notifyDataSetChanged();
                 return true;
             }
             return false;
         }
 
-        private boolean updateNotificationSubCardIfNotificationPackageExists(NotificationItemModel notificationItemModel) {
+        private boolean updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel notificationItemModel) {
             // go through the list to see if the notification with that packageName already exists
             // if so, update that notification to position 0
             int position = -1;
