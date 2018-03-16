@@ -1,8 +1,9 @@
-package com.example.android.notify;
+package com.example.android.notify.services;
 
 import android.content.Intent;
 import android.os.IBinder;
 import android.service.notification.StatusBarNotification;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class NotifyListenerService extends android.service.notification.NotificationListenerService {
@@ -32,7 +33,7 @@ public class NotifyListenerService extends android.service.notification.Notifica
         statusBarNotification.getNotification().extras.putString("android.wearable.EXTENSIONS", null);
 
         intent.putExtra("notification_created_event", statusBarNotification);
-        sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @Override

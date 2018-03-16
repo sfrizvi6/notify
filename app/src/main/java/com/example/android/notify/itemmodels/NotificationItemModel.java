@@ -1,7 +1,8 @@
-package com.example.android.notify;
+package com.example.android.notify.itemmodels;
 
 import android.content.Context;
 import android.util.Log;
+import com.example.android.notify.adapters.NotificationSubAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

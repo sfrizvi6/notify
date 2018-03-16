@@ -1,4 +1,4 @@
-package com.example.android.notify;
+package com.example.android.notify.itemmodels;
 
 import android.content.Context;
 

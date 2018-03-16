@@ -10,11 +10,15 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.View;
+import com.example.android.notify.adapters.NotificationAdapter;
+import com.example.android.notify.itemmodels.NotificationItemModel;
+import com.example.android.notify.itemmodels.NotificationSubItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +41,8 @@ public class NotificationsActivity extends AppCompatActivity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("notification_created");
-        registerReceiver(notificationReceiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, filter);
+//        registerReceiver(notificationReceiver, filter);
     }
 
     public void createNotification(View v) {
