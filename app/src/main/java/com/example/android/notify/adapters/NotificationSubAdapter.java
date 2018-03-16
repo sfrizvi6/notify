@@ -56,12 +56,13 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
                 deepLinkToApp(holder);
             }
         });
-        holder.notificationTitle.setText(notificationItemModel.title);
-        holder.notificationText.setText(notificationItemModel.text);
+        holder.notificationTitle.setText(notificationItemModel.getTitle());
+        holder.notificationText.setText(notificationItemModel.getText());
         holder.notificationCard.setCardBackgroundColor(Color.LTGRAY);
-        holder.notificationTimestamp.setText(notificationItemModel.timestamp);
-        if (notificationItemModel.textLines != null && notificationItemModel.textLines.length() > 0) {
-            holder.notificationTextLines.setText(notificationItemModel.textLines);
+        holder.notificationTimestamp.setText(notificationItemModel.getTimestamp());
+        String textLines = notificationItemModel.getTextLines();
+        if (textLines != null && textLines.length() > 0) {
+            holder.notificationTextLines.setText(textLines);
         }
     }
 

@@ -34,10 +34,10 @@ public class NotificationItemModel extends NotificationSubItemModel {
               notificationSubItemModel.appName,
               notificationSubItemModel.appIcon,
               notificationSubItemModel.packageName,
-              notificationSubItemModel.title,
-              notificationSubItemModel.text,
-              notificationSubItemModel.timestamp,
-              notificationSubItemModel.textLines);
+              notificationSubItemModel.getTitle(),
+              notificationSubItemModel.getText(),
+              notificationSubItemModel.getTimestamp(),
+              notificationSubItemModel.getTextLines());
         subData = new ArrayList<>();
         subAdapter = new NotificationSubAdapter(subData);
     }
@@ -57,5 +57,9 @@ public class NotificationItemModel extends NotificationSubItemModel {
 
     public NotificationSubAdapter getSubAdapter() {
         return subAdapter;
+    }
+
+    public List<NotificationSubItemModel> getSubData() {
+        return subData;
     }
 }

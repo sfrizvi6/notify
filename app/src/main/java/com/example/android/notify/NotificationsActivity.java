@@ -15,15 +15,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import com.example.android.notify.adapters.NotificationAdapter;
 import com.example.android.notify.itemmodels.NotificationItemModel;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
+import com.example.android.notify.utils.NotificationUpdateState;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationsActivity extends AppCompatActivity {
+
+    private static final String TAG = NotificationsActivity.class.getSimpleName();
 
     private RecyclerView notificationsRecyclerView;
     private NotificationAdapter adapter;
@@ -41,8 +45,10 @@ public class NotificationsActivity extends AppCompatActivity {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("notification_created");
+
+        // Using LocalBroadcastManager instead of Context to registerReceiver and sendBroadcasts
+        // to avoid exception: android.app.RemoteServiceException: can't deliver broadcast
         LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, filter);
-//        registerReceiver(notificationReceiver, filter);
     }
 
     public void createNotification(View v) {
@@ -94,7 +100,7 @@ public class NotificationsActivity extends AppCompatActivity {
                 }
             }
             int icon = extras.getInt("android.icon");
-            NotificationSubItemModel notificationItemModel =
+            NotificationSubItemModel incomingNotification =
                 new NotificationSubItemModel(context, statusBarNotification.getId(),
                                              appName,
                                              icon,
@@ -105,50 +111,71 @@ public class NotificationsActivity extends AppCompatActivity {
                                                                       statusBarNotification.getPostTime(),
                                                                       DateUtils.FORMAT_SHOW_TIME),
                                              textLinesString.toString());
-            if (!updateNotificationSubCardIfNotificationPackageExists(notificationItemModel)) {
-                if (!updateNotificationCardIfExists(notificationItemModel)) {
-                    data.add(0, new NotificationItemModel(notificationItemModel));
-                    adapter.notifyDataSetChanged();
-                }
-            }
+            Log.e(TAG, updateNotificationSubCardIfNotificationPackageExists(incomingNotification).toString());
         }
 
-        private boolean updateNotificationCardIfExists(NotificationSubItemModel notificationSubItemModel) {
-            // go through the list to see if the notification with that ID already exists
-            // if so, update that notification to position 0
-            int position = -1;
-            for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).id == notificationSubItemModel.id) {
-                    position = i;
-                }
-            }
-            if (position >= 0 && position < data.size()) {
-                data.remove(position);
-                data.add(0, new NotificationItemModel(notificationSubItemModel));
-                adapter.notifyDataSetChanged();
-                return true;
-            }
-            return false;
-        }
-
-        private boolean updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel notificationItemModel) {
+        private NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
             // go through the list to see if the notification with that packageName already exists
             // if so, update that notification to position 0
             int position = -1;
             for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).packageName.equals(notificationItemModel.packageName)) {
+                if (data.get(i).packageName.equals(incomingNotification.packageName)) {
                     position = i;
                 }
             }
             if (position >= 0 && position < data.size()) {
-                NotificationItemModel existingNotificationItemModel = data.get(position);
-                existingNotificationItemModel.addSubNotificationData(notificationItemModel);
+                NotificationItemModel existingNotification = data.get(position);
+
+                // also check if the parent notification is the same id
+                // if so update the relevant fields of parent notification
+                // and then update the position of the parent notification in the adapter
+                if (existingNotification.id == incomingNotification.id) {
+                    existingNotification.setTitle(incomingNotification.getTitle());
+                    existingNotification.setText(incomingNotification.getText());
+                    existingNotification.setTextLines(incomingNotification.getTextLines());
+                    existingNotification.setTimestamp(incomingNotification.getTimestamp());
+                    data.remove(position);
+                    data.add(0, existingNotification);
+                    adapter.notifyDataSetChanged();
+                    return NotificationUpdateState.PARENT_NOTIFICATION_UPDATED;
+                }
+
+                // if the incoming notification is not the same ID as parent notification
+                // check if it is one of the sub-notifications
+                List<NotificationSubItemModel> subData = existingNotification.getSubData();
+                for (int i = 0; i < subData.size(); i++) {
+                    if (subData.get(i).id == incomingNotification.id) {
+                        NotificationSubItemModel existingSubNotification = subData.get(position);
+
+                        // if notification already exists then update the relevant fields
+                        // and then update the position of the sub-notification in the adapter
+                        existingSubNotification.setTitle(incomingNotification.getTitle());
+                        existingSubNotification.setText(incomingNotification.getText());
+                        existingSubNotification.setTextLines(incomingNotification.getTextLines());
+                        existingSubNotification.setTimestamp(incomingNotification.getTimestamp());
+                        subData.remove(position);
+                        subData.add(0, existingSubNotification);
+                        existingNotification.getSubAdapter().notifyDataSetChanged();
+                        adapter.notifyDataSetChanged();
+                        return NotificationUpdateState.SUB_NOTIFICATION_UPDATED;
+                    }
+                }
+
+                // if incoming notification's parent notification exists but sub-notification doesn't
+                // add notification to existingNotification's sub-notification list
+                existingNotification.addSubNotificationData(incomingNotification);
                 data.remove(position);
-                data.add(0, existingNotificationItemModel);
+                data.add(0, existingNotification);
                 adapter.notifyDataSetChanged();
-                return true;
+                return NotificationUpdateState.NEW_SUB_NOTIFICATION_ADDED;
             }
-            return false;
+
+            // if neither parent nor sub-notification exists
+            // create a new parent notification and add it to top of the adapter
+            NotificationItemModel newNotification = new NotificationItemModel(incomingNotification);
+            data.add(0, newNotification);
+            adapter.notifyDataSetChanged();
+            return NotificationUpdateState.NEW_PARENT_NOTIFICATION_ADDED;
         }
     }
 }

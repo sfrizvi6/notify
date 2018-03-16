@@ -6,15 +6,47 @@ public class NotificationSubItemModel {
 
     private static final String TAG = NotificationSubItemModel.class.getSimpleName();
 
-    public final Context context;
+    final Context context;
     public final int id;
     public final String appName;
     public final int appIcon;
     public final String packageName;
-    public final String title;
-    public final String text;
-    public final String timestamp;
-    public final String textLines;
+    private String title;
+    private String text;
+    private String timestamp;
+    private String textLines;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getTextLines() {
+        return textLines;
+    }
+
+    public void setTextLines(String textLines) {
+        this.textLines = textLines;
+    }
 
     public NotificationSubItemModel(Context context,
                                     int id,
