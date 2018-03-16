@@ -61,9 +61,7 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
         holder.notificationCard.setCardBackgroundColor(Color.LTGRAY);
         holder.notificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
-        if (textLines != null && textLines.length() > 0) {
-            holder.notificationTextLines.setText(textLines);
-        }
+        holder.notificationTextLines.setText(textLines == null ? "" : textLines);
     }
 
     private void deepLinkToApp(@NonNull NotificationViewHolder holder) {

@@ -63,10 +63,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.notificationCard.setCardBackgroundColor(Color.LTGRAY);
         holder.notificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
-        if (textLines != null && textLines.length() > 0) {
-            holder.notificationTextLines.setText(textLines);
-        }
-        holder.notificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(context, RecyclerView.VERTICAL, false));
+        holder.notificationTextLines.setText(textLines == null ? "" : textLines);
+        holder.notificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(context,
+                                                                                     RecyclerView.VERTICAL,
+                                                                                     false));
         holder.notificationsSubRecyclerView.setAdapter(notificationItemModel.getSubAdapter());
     }
 

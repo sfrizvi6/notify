@@ -144,9 +144,8 @@ public class NotificationsActivity extends AppCompatActivity {
                             // if notification already exists then update the relevant fields
                             // and then update the subPosition of the sub-notification in the adapter
                             updateNotificationFields(existingSubNotification, incomingNotification);
-                            subData.remove(subPosition);
-                            subData.add(0, existingSubNotification);
-                            existingNotification.getSubAdapter().notifyDataSetChanged();
+                            existingNotification.removeSubNotificationData(subPosition);
+                            existingNotification.addSubNotificationData(existingSubNotification);
 
                             // now update the parent notification's timestamp and location in adapter
                             existingNotification.setTimestamp(incomingNotification.getTimestamp());
