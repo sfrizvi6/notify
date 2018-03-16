@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
@@ -100,10 +101,12 @@ public class NotificationsActivity extends AppCompatActivity {
                 }
             }
             int icon = extras.getInt("android.icon");
+            Bitmap largeIcon = (Bitmap) extras.get("android.largeIcon");
             NotificationSubItemModel incomingNotification =
                 new NotificationSubItemModel(context, statusBarNotification.getId(),
                                              appName,
                                              icon,
+                                             largeIcon,
                                              packageName,
                                              title,
                                              text,

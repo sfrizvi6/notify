@@ -23,7 +23,7 @@ public class NotificationItemModel extends NotificationSubItemModel {
                                  String text,
                                  String timestamp,
                                  String textLines) {
-        super(context, id, appName, appIcon, packageName, title, text, timestamp, textLines);
+        super(context, id, appName, appIcon, null, packageName, title, text, timestamp, textLines);
         subData = new ArrayList<>();
         subAdapter = new NotificationSubAdapter(subData);
     }
@@ -33,6 +33,7 @@ public class NotificationItemModel extends NotificationSubItemModel {
               notificationSubItemModel.id,
               notificationSubItemModel.appName,
               notificationSubItemModel.appIcon,
+              notificationSubItemModel.largeIcon,
               notificationSubItemModel.packageName,
               notificationSubItemModel.getTitle(),
               notificationSubItemModel.getText(),

@@ -1,6 +1,7 @@
 package com.example.android.notify.itemmodels;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 public class NotificationSubItemModel {
 
@@ -10,6 +11,7 @@ public class NotificationSubItemModel {
     public final int id;
     public final String appName;
     public final int appIcon;
+    public final Bitmap largeIcon;
     public final String packageName;
     private String title;
     private String text;
@@ -52,6 +54,7 @@ public class NotificationSubItemModel {
                                     int id,
                                     String appName,
                                     int appIcon,
+                                    Bitmap largeIcon,
                                     String packageName,
                                     String title,
                                     String text,
@@ -61,6 +64,7 @@ public class NotificationSubItemModel {
         this.id = id;
         this.appName = appName;
         this.appIcon = appIcon;
+        this.largeIcon = largeIcon;
         this.packageName = packageName;
         this.title = title;
         this.text = text;

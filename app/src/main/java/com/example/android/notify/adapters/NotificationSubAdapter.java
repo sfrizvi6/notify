@@ -2,14 +2,10 @@ package com.example.android.notify.adapters;
 
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +15,6 @@ import com.example.android.notify.R;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
 
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSubAdapter.NotificationViewHolder> {
 
@@ -42,13 +36,8 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
     @Override
     public void onBindViewHolder(@NonNull final NotificationViewHolder holder, int position) {
         NotificationSubItemModel notificationItemModel = notificationList.get(position);
-        try {
-            Resources res =
-                context.getPackageManager().getResourcesForApplication(notificationItemModel.packageName);
-            Drawable icon = res.getDrawable(notificationItemModel.appIcon);
-            holder.notificationImage.setImageDrawable(icon);
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, e.getMessage());
+        if (notificationItemModel.largeIcon != null) {
+            holder.notificationImage.setImageBitmap(notificationItemModel.largeIcon);
         }
         holder.notificationCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +51,7 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
         holder.notificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
         holder.notificationTextLines.setText(textLines == null ? "" : textLines);
+        holder.notificationTextLines.setVisibility(textLines == null ? View.GONE : View.VISIBLE);
     }
 
     private void deepLinkToApp(@NonNull NotificationViewHolder holder) {

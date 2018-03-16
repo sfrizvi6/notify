@@ -64,6 +64,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.notificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
         holder.notificationTextLines.setText(textLines == null ? "" : textLines);
+        holder.notificationTextLines.setVisibility(textLines == null ? View.GONE : View.VISIBLE);
         holder.notificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(context,
                                                                                      RecyclerView.VERTICAL,
                                                                                      false));
