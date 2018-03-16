@@ -26,6 +26,11 @@ public class NotifyListenerService extends android.service.notification.Notifica
         }
         Log.i(TAG, "Notification Arrived:\nID: " + statusBarNotification.getId());
         Intent intent = new Intent("notification_created");
+
+        // TODO: write custom Bundle de-/serialization because parcel data for
+        // "android.wearable.EXTENSIONS" for Gmail notifications specifically causes crashes
+        statusBarNotification.getNotification().extras.putString("android.wearable.EXTENSIONS", null);
+
         intent.putExtra("notification_created_event", statusBarNotification);
         sendBroadcast(intent);
     }
