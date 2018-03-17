@@ -10,7 +10,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -23,6 +22,7 @@ import android.view.View;
 import com.example.android.notify.adapters.NotificationAdapter;
 import com.example.android.notify.itemmodels.NotificationItemModel;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
+import com.example.android.notify.services.NotifyListenerService;
 import com.example.android.notify.utils.NotificationUpdateState;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class NotificationsActivity extends AppCompatActivity {
 
         initNotificationListRecyclerView();
 
-        startService(new Intent(this, NotificationListenerService.class));
+        startService(new Intent(this, NotifyListenerService.class));
 
         IntentFilter filter = new IntentFilter();
         filter.addAction("notification_created");

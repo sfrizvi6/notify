@@ -13,7 +13,7 @@ public class NotifyListenerService extends android.service.notification.Notifica
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e(TAG, "Notification service stated");
+        Log.e(TAG, "Notification service started");
     }
 
     @Override
