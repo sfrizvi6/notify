@@ -49,6 +49,7 @@ public class TestingUtils {
             return;
         }
         Notification notification = new Notification.Builder(context)
+            .setGroup("speculooooos")
             .setContentTitle("5 New mails from sfrizvi6@gmail.com")
             .setContentText("Hello from the other side!")
             .setSmallIcon(R.drawable.ic_launcher_background)
