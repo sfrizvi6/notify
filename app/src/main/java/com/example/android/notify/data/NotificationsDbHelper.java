@@ -21,7 +21,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
             NotificationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             NotificationEntry.COLUMN_NOTIFICATION_ID + " INTEGER NOT NULL, " +
             NotificationEntry.COLUMN_APP_NAME + " TEXT NOT NULL," +
-            NotificationEntry.COLUMN_APP_ICON + " BLOB NOT NULL, " +
+            NotificationEntry.COLUMN_APP_ICON + " INTEGER NOT NULL, " +
             NotificationEntry.COLUMN_APP_LARGE_ICON + " BLOB, " +
             NotificationEntry.COLUMN_APP_PACKAGE_NAME + " TEXT NOT NULL, " +
             NotificationEntry.COLUMN_APP_PENDING_INTENT + " BLOB, " +

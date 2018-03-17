@@ -12,8 +12,8 @@ public class NotificationItemModel extends NotificationSubItemModel {
 
     private static final String TAG = NotificationItemModel.class.getSimpleName();
 
-    private List<NotificationSubItemModel> subData;
-    private NotificationSubAdapter subAdapter;
+    private List<NotificationSubItemModel> mSubData;
+    private NotificationSubAdapter mSubAdapter;
 
     public NotificationItemModel(Context context,
                                  int id,
@@ -38,45 +38,45 @@ public class NotificationItemModel extends NotificationSubItemModel {
               text,
               timestamp,
               textLines);
-        subData = new ArrayList<>();
-        subAdapter = new NotificationSubAdapter(subData);
+        mSubData = new ArrayList<>();
+        mSubAdapter = new NotificationSubAdapter(mSubData);
     }
 
     public NotificationItemModel(NotificationSubItemModel notificationSubItemModel) {
         super(notificationSubItemModel.mContext,
               notificationSubItemModel.mId,
-              notificationSubItemModel.appName,
-              notificationSubItemModel.appIcon,
-              notificationSubItemModel.largeIcon,
-              notificationSubItemModel.packageName,
-              notificationSubItemModel.pendingIntent,
-              notificationSubItemModel.groupKey,
+              notificationSubItemModel.mAppName,
+              notificationSubItemModel.mAppIcon,
+              notificationSubItemModel.mLargeIcon,
+              notificationSubItemModel.mPackageName,
+              notificationSubItemModel.mPendingIntent,
+              notificationSubItemModel.mGroupKey,
               notificationSubItemModel.getTitle(),
               notificationSubItemModel.getText(),
               notificationSubItemModel.getTimestamp(),
               notificationSubItemModel.getTextLines());
-        subData = new ArrayList<>();
-        subAdapter = new NotificationSubAdapter(subData);
+        mSubData = new ArrayList<>();
+        mSubAdapter = new NotificationSubAdapter(mSubData);
     }
 
     public void addSubNotificationData(NotificationSubItemModel subNotificationItemModel) {
-        subData.add(0, subNotificationItemModel);
-        subAdapter.notifyDataSetChanged();
+        mSubData.add(0, subNotificationItemModel);
+        mSubAdapter.notifyDataSetChanged();
     }
 
     public void removeSubNotificationData(int position) {
-        if (position < 0 && position >= subData.size()) {
+        if (position < 0 && position >= mSubData.size()) {
             Log.e(TAG, "Sub-adapter position# " + position + " doesn't exist!");
         }
-        subData.remove(position);
-        subAdapter.notifyDataSetChanged();
+        mSubData.remove(position);
+        mSubAdapter.notifyDataSetChanged();
     }
 
     public NotificationSubAdapter getSubAdapter() {
-        return subAdapter;
+        return mSubAdapter;
     }
 
     public List<NotificationSubItemModel> getSubData() {
-        return subData;
+        return mSubData;
     }
 }

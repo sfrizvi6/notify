@@ -28,33 +28,33 @@ import static android.content.ContentValues.TAG;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
-    private List<NotificationItemModel> notificationList;
-    private Context context;
+    private List<NotificationItemModel> mNotificationList;
+    private Context mContext;
 
     public NotificationAdapter(List<NotificationItemModel> notificationList) {
-        this.notificationList = notificationList;
+        this.mNotificationList = notificationList;
     }
 
     @NonNull
     @Override
     public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
+        mContext = parent.getContext();
         return new NotificationViewHolder(LayoutInflater.from(parent.getContext())
                                                         .inflate(R.layout.notification_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull final NotificationViewHolder holder, int position) {
-        final NotificationItemModel notificationItemModel = notificationList.get(position);
+        final NotificationItemModel notificationItemModel = mNotificationList.get(position);
         try {
             Resources res =
-                context.getPackageManager().getResourcesForApplication(notificationItemModel.packageName);
-            Drawable icon = res.getDrawable(notificationItemModel.appIcon);
-            holder.notificationImage.setImageDrawable(icon);
+                mContext.getPackageManager().getResourcesForApplication(notificationItemModel.mPackageName);
+            Drawable icon = res.getDrawable(notificationItemModel.mAppIcon);
+            holder.mNotificationImage.setImageDrawable(icon);
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, e.getMessage());
         }
-        holder.showMore.setOnTouchListener(new View.OnTouchListener() {
+        holder.nShowMore.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (v != null && event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -63,36 +63,36 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 return true;
             }
         });
-        holder.notificationCard.setOnClickListener(new View.OnClickListener() {
+        holder.mNotificationCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deepLinkToApp(notificationItemModel);
             }
         });
-        holder.notificationAppName.setText(notificationItemModel.appName);
-        holder.notificationTitle.setText(notificationItemModel.getTitle());
-        holder.notificationText.setText(notificationItemModel.getText());
-        holder.notificationCard.setCardBackgroundColor(Color.LTGRAY);
-        holder.notificationTimestamp.setText(notificationItemModel.getTimestamp());
+        holder.mNotificationAppName.setText(notificationItemModel.mAppName);
+        holder.mNotificationTitle.setText(notificationItemModel.getTitle());
+        holder.mNotificationText.setText(notificationItemModel.getText());
+        holder.mNotificationCard.setCardBackgroundColor(Color.LTGRAY);
+        holder.mNotificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
-        holder.notificationTextLines.setText(textLines == null ? "" : textLines);
-        holder.notificationTextLines.setVisibility(View.GONE);
-        holder.notificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(context,
-                                                                                     RecyclerView.VERTICAL,
-                                                                                     false));
-        holder.notificationsSubRecyclerView.setAdapter(notificationItemModel.getSubAdapter());
-        holder.showMore.setVisibility(textLines == null || textLines.equals("")
+        holder.mNotificationTextLines.setText(textLines == null ? "" : textLines);
+        holder.mNotificationTextLines.setVisibility(View.GONE);
+        holder.mNotificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,
+                                                                                      RecyclerView.VERTICAL,
+                                                                                      false));
+        holder.mNotificationsSubRecyclerView.setAdapter(notificationItemModel.getSubAdapter());
+        holder.nShowMore.setVisibility(textLines == null || textLines.equals("")
                                       ? View.GONE
                                       : View.VISIBLE);
     }
 
     private void toggleDetailCardView(@NonNull Button showMoreButton) {
         boolean isShowMoreVisible = showMoreButton.getVisibility() == View.VISIBLE && showMoreButton.getText()
-                                                                                                    .equals(context.getString(
+                                                                                                    .equals(mContext.getString(
                                                                                                         R.string.show_more_btn_label));
         showMoreButton.setText(isShowMoreVisible
-                               ? context.getString(R.string.show_less_btn_label)
-                               : context.getString(R.string.show_more_btn_label));
+                               ? mContext.getString(R.string.show_less_btn_label)
+                               : mContext.getString(R.string.show_more_btn_label));
 
         TextView textLinesTextView = ((View) showMoreButton.getParent()).findViewById(R.id.notification_text_lines);
         textLinesTextView.setVisibility(isShowMoreVisible
@@ -102,7 +102,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private void deepLinkToApp(@NonNull final NotificationItemModel notificationItemModel) {
         try {
-            notificationItemModel.pendingIntent.send();
+            notificationItemModel.mPendingIntent.send();
         } catch (PendingIntent.CanceledException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -110,32 +110,32 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public int getItemCount() {
-        return notificationList == null ? 0 : notificationList.size();
+        return mNotificationList == null ? 0 : mNotificationList.size();
     }
 
     class NotificationViewHolder extends RecyclerView.ViewHolder {
 
-        CardView notificationCard;
-        ImageView notificationImage;
-        TextView notificationAppName;
-        TextView notificationTitle;
-        TextView notificationText;
-        TextView notificationTimestamp;
-        Button showMore;
-        TextView notificationTextLines;
-        RecyclerView notificationsSubRecyclerView;
+        CardView mNotificationCard;
+        ImageView mNotificationImage;
+        TextView mNotificationAppName;
+        TextView mNotificationTitle;
+        TextView mNotificationText;
+        TextView mNotificationTimestamp;
+        Button nShowMore;
+        TextView mNotificationTextLines;
+        RecyclerView mNotificationsSubRecyclerView;
 
         NotificationViewHolder(View itemView) {
             super(itemView);
-            notificationCard = itemView.findViewById(R.id.notification_card);
-            notificationImage = itemView.findViewById(R.id.notification_image);
-            notificationAppName = itemView.findViewById(R.id.notification_app_name);
-            notificationTitle = itemView.findViewById(R.id.notification_title);
-            notificationText = itemView.findViewById(R.id.notification_text);
-            notificationTimestamp = itemView.findViewById(R.id.notification_timestamp);
-            showMore = itemView.findViewById(R.id.notification_see_more);
-            notificationTextLines = itemView.findViewById(R.id.notification_text_lines);
-            notificationsSubRecyclerView = itemView.findViewById(R.id.notification_sub_list);
+            mNotificationCard = itemView.findViewById(R.id.notification_card);
+            mNotificationImage = itemView.findViewById(R.id.notification_image);
+            mNotificationAppName = itemView.findViewById(R.id.notification_app_name);
+            mNotificationTitle = itemView.findViewById(R.id.notification_title);
+            mNotificationText = itemView.findViewById(R.id.notification_text);
+            mNotificationTimestamp = itemView.findViewById(R.id.notification_timestamp);
+            nShowMore = itemView.findViewById(R.id.notification_see_more);
+            mNotificationTextLines = itemView.findViewById(R.id.notification_text_lines);
+            mNotificationsSubRecyclerView = itemView.findViewById(R.id.notification_sub_list);
 
         }
     }

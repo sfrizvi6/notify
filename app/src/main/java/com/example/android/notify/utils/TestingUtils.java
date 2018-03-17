@@ -15,52 +15,52 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class TestingUtils {
 
-    public final Context context;
+    public final Context mContext;
 
     public TestingUtils(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     public void createNotification(View v) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) {
             return;
         }
-        Notification notificationCompatBuilder = new Notification.Builder(context).setContentTitle("Test Notification")
-                                                                                  .setContentText(
+        Notification notificationCompatBuilder = new Notification.Builder(mContext).setContentTitle("Test Notification")
+                                                                                   .setContentText(
                                                                                       "Content for Test Notification")
-                                                                                  .setSmallIcon(R.drawable.ic_launcher_background)
-                                                                                  .setAutoCancel(true)
-                                                                                  .setContentIntent(PendingIntent.getActivity(
-                                                                                      context,
+                                                                                   .setSmallIcon(R.drawable.ic_launcher_background)
+                                                                                   .setAutoCancel(true)
+                                                                                   .setContentIntent(PendingIntent.getActivity(
+                                                                                       mContext,
                                                                                       0,
-                                                                                      new Intent(context,
+                                                                                      new Intent(mContext,
                                                                                                  NotificationsActivity.class),
                                                                                       PendingIntent.FLAG_UPDATE_CURRENT))
-                                                                                  .build();
+                                                                                   .build();
 
 
         notificationManager.notify((int) System.currentTimeMillis(), notificationCompatBuilder);
     }
 
     public void createInboxStyleNotification(View v) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(NOTIFICATION_SERVICE);
         if (notificationManager == null) {
             return;
         }
-        Notification notification = new Notification.Builder(context)
+        Notification notification = new Notification.Builder(mContext)
             .setGroup("speculooooos")
             .setContentTitle("5 New mails from sfrizvi6@gmail.com")
             .setContentText("Hello from the other side!")
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher_background))
+            .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher_background))
             .setStyle(new Notification.InboxStyle()
                           .addLine("foo: bar")
                           .addLine("blah: blah blah")
                           .setSummaryText("+3 more"))
-            .setContentIntent(PendingIntent.getActivity(context,
+            .setContentIntent(PendingIntent.getActivity(mContext,
                                                         0,
-                                                        new Intent(context, NotificationsActivity.class),
+                                                        new Intent(mContext, NotificationsActivity.class),
                                                         PendingIntent.FLAG_UPDATE_CURRENT))
             .build();
         notificationManager.notify((int) System.currentTimeMillis(), notification);

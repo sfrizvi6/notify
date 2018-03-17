@@ -2,13 +2,17 @@ package com.example.android.notify;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +22,8 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import com.example.android.notify.adapters.NotificationAdapter;
+import com.example.android.notify.data.NotificationContract.NotificationEntry;
+import com.example.android.notify.data.NotificationsDbHelper;
 import com.example.android.notify.itemmodels.NotificationItemModel;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
 import com.example.android.notify.services.NotifyListenerService;
@@ -26,6 +32,8 @@ import com.example.android.notify.utils.TestingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.android.notify.data.NotificationContract.NotificationEntry.TABLE_NAME;
 
 public class NotificationsActivity extends AppCompatActivity {
 
@@ -37,6 +45,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private NotificationAdapter mAdapter;
     private NotificationReceiver mNotificationReceiver;
     private List<NotificationItemModel> mData;
+    private SQLiteDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +66,9 @@ public class NotificationsActivity extends AppCompatActivity {
         // Using LocalBroadcastManager instead of Context to registerReceiver and sendBroadcasts
         // to avoid exception: android.app.RemoteServiceException: can't deliver broadcast
         LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationReceiver, filter);
+
+        NotificationsDbHelper dbHelper = new NotificationsDbHelper(this);
+        mDb = dbHelper.getWritableDatabase();
     }
 
     public void createNotification(View v) {
@@ -107,8 +119,12 @@ public class NotificationsActivity extends AppCompatActivity {
             }
             int icon = extras.getInt("android.icon");
             Bitmap largeIcon = (Bitmap) extras.get("android.largeIcon");
+            int notificationId = statusBarNotification.getId();
+            String timestamp = DateUtils.formatDateTime(context,
+                                                        statusBarNotification.getPostTime(),
+                                                        DateUtils.FORMAT_SHOW_TIME);
             NotificationSubItemModel incomingNotification =
-                new NotificationSubItemModel(context, statusBarNotification.getId(),
+                new NotificationSubItemModel(context, notificationId,
                                              appName,
                                              icon,
                                              largeIcon,
@@ -117,18 +133,37 @@ public class NotificationsActivity extends AppCompatActivity {
                                              groupKey,
                                              title,
                                              text,
-                                             DateUtils.formatDateTime(context,
-                                                                      statusBarNotification.getPostTime(),
-                                                                      DateUtils.FORMAT_SHOW_TIME),
+                                             timestamp,
                                              textLinesString.toString());
+            persistNotification(incomingNotification);
             Log.e(TAG, updateNotificationSubCardIfNotificationPackageExists(incomingNotification).toString());
+        }
+
+        private void persistNotification(NotificationSubItemModel notificationSubItemModel) {
+            ContentValues notificationDbContent = new ContentValues();
+            notificationDbContent.put(NotificationEntry.COLUMN_NOTIFICATION_ID, notificationSubItemModel.mId);
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_NAME, notificationSubItemModel.mAppName);
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_ICON, notificationSubItemModel.mAppIcon);
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_LARGE_ICON, "");
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_PACKAGE_NAME, notificationSubItemModel.mPackageName);
+            Parcel parcel = Parcel.obtain();
+            notificationSubItemModel.mPendingIntent.writeToParcel(parcel, 0);
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_PENDING_INTENT, parcel.createByteArray());
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_GROUP_KEY, notificationSubItemModel.mGroupKey);
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_TITLE, notificationSubItemModel.getTitle());
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_TEXT, notificationSubItemModel.getText());
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_TIMESTAMP, notificationSubItemModel.getTimestamp());
+            notificationDbContent.put(NotificationEntry.COLUMN_APP_TEXTLINES, notificationSubItemModel.getTextLines());
+            mDb.insert(TABLE_NAME, null, notificationDbContent);
+            Cursor cursor = mDb.query(TABLE_NAME, null, null, null, null, null, null);
+            cursor.getCount();
         }
 
         private NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
             // go through the list to see if the notification with that groupKey already exists
             // if so, update that notification to position 0
             for (int i = 0; i < mData.size(); i++) {
-                if (mData.get(i).groupKey.equals(incomingNotification.groupKey)) {
+                if (mData.get(i).mGroupKey.equals(incomingNotification.mGroupKey)) {
                     int position = i;
                     NotificationItemModel existingNotification = mData.get(position);
 
