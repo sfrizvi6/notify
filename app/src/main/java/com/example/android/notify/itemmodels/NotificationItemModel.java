@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.util.Log;
 import com.example.android.notify.adapters.NotificationSubAdapter;
+import com.example.android.notify.utils.NotificationCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class NotificationItemModel extends NotificationSubItemModel {
 
     public NotificationItemModel(Context context,
                                  int id,
+                                 String category,
                                  String appName,
                                  int appIcon,
                                  String packageName,
@@ -28,6 +30,7 @@ public class NotificationItemModel extends NotificationSubItemModel {
                                  String textLines) {
         super(context,
               id,
+              NotificationCategory.getCategory(category),
               appName,
               appIcon,
               null,
@@ -45,6 +48,7 @@ public class NotificationItemModel extends NotificationSubItemModel {
     public NotificationItemModel(NotificationSubItemModel notificationSubItemModel) {
         super(notificationSubItemModel.mContext,
               notificationSubItemModel.mId,
+              notificationSubItemModel.mCategory,
               notificationSubItemModel.mAppName,
               notificationSubItemModel.mAppIcon,
               notificationSubItemModel.mLargeIcon,

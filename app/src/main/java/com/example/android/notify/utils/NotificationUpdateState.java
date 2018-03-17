@@ -9,8 +9,8 @@ public enum NotificationUpdateState {
 
     private String mUpdateStatus;
 
-    NotificationUpdateState(String mUpdateStatus) {
-        this.mUpdateStatus = mUpdateStatus;
+    NotificationUpdateState(String updateStatus) {
+        mUpdateStatus = updateStatus;
     }
 
     @Override

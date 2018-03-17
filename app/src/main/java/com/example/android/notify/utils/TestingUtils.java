@@ -27,6 +27,7 @@ public class TestingUtils {
             return;
         }
         Notification notificationCompatBuilder = new Notification.Builder(mContext).setContentTitle("Test Notification")
+                                                                                   .setCategory("social")
                                                                                    .setContentText(
                                                                                       "Content for Test Notification")
                                                                                    .setSmallIcon(R.drawable.ic_launcher_background)
@@ -54,6 +55,7 @@ public class TestingUtils {
             .setContentText("Hello from the other side!")
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher_background))
+            .setCategory("email")
             .setStyle(new Notification.InboxStyle()
                           .addLine("foo: bar")
                           .addLine("blah: blah blah")

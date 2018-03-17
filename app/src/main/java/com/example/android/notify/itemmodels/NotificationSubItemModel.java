@@ -3,6 +3,7 @@ package com.example.android.notify.itemmodels;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
+import com.example.android.notify.utils.NotificationCategory;
 
 public class NotificationSubItemModel {
 
@@ -10,6 +11,7 @@ public class NotificationSubItemModel {
 
     final Context mContext;
     public final int mId;
+    public final NotificationCategory mCategory;
     public final String mAppName;
     public final int mAppIcon;
     public final Bitmap mLargeIcon;
@@ -55,6 +57,7 @@ public class NotificationSubItemModel {
 
     public NotificationSubItemModel(Context context,
                                     int id,
+                                    NotificationCategory category,
                                     String appName,
                                     int appIcon,
                                     Bitmap largeIcon,
@@ -67,6 +70,7 @@ public class NotificationSubItemModel {
                                     String textLines) {
         this.mContext = context;
         this.mId = id;
+        this.mCategory = category;
         this.mAppName = appName;
         this.mAppIcon = appIcon;
         this.mLargeIcon = largeIcon;
