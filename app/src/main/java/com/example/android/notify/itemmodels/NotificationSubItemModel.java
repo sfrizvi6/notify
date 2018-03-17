@@ -8,8 +8,8 @@ public class NotificationSubItemModel {
 
     private static final String TAG = NotificationSubItemModel.class.getSimpleName();
 
-    final Context context;
-    public final int id;
+    final Context mContext;
+    public final int mId;
     public final String appName;
     public final int appIcon;
     public final Bitmap largeIcon;
@@ -53,8 +53,8 @@ public class NotificationSubItemModel {
         this.textLines = textLines;
     }
 
-    public NotificationSubItemModel(Context context,
-                                    int id,
+    public NotificationSubItemModel(Context mContext,
+                                    int mId,
                                     String appName,
                                     int appIcon,
                                     Bitmap largeIcon,
@@ -65,8 +65,8 @@ public class NotificationSubItemModel {
                                     String text,
                                     String timestamp,
                                     String textLines) {
-        this.context = context;
-        this.id = id;
+        this.mContext = mContext;
+        this.mId = mId;
         this.appName = appName;
         this.appIcon = appIcon;
         this.largeIcon = largeIcon;

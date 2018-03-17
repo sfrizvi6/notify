@@ -7,14 +7,14 @@ public enum NotificationUpdateState {
     NEW_SUB_NOTIFICATION_ADDED("New sub-notification added to an existing parent"),
     NEW_PARENT_NOTIFICATION_ADDED("New parent notification added");
 
-    private String updateStatus;
+    private String mUpdateStatus;
 
-    NotificationUpdateState(String updateStatus) {
-        this.updateStatus = updateStatus;
+    NotificationUpdateState(String mUpdateStatus) {
+        this.mUpdateStatus = mUpdateStatus;
     }
 
     @Override
     public String toString() {
-        return updateStatus;
+        return mUpdateStatus;
     }
 }

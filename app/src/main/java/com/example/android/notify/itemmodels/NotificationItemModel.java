@@ -43,8 +43,8 @@ public class NotificationItemModel extends NotificationSubItemModel {
     }
 
     public NotificationItemModel(NotificationSubItemModel notificationSubItemModel) {
-        super(notificationSubItemModel.context,
-              notificationSubItemModel.id,
+        super(notificationSubItemModel.mContext,
+              notificationSubItemModel.mId,
               notificationSubItemModel.appName,
               notificationSubItemModel.appIcon,
               notificationSubItemModel.largeIcon,

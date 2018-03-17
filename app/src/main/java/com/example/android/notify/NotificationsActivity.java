@@ -1,6 +1,5 @@
 package com.example.android.notify;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +22,7 @@ import com.example.android.notify.itemmodels.NotificationItemModel;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
 import com.example.android.notify.services.NotifyListenerService;
 import com.example.android.notify.utils.NotificationUpdateState;
+import com.example.android.notify.utils.TestingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +31,21 @@ public class NotificationsActivity extends AppCompatActivity {
 
     private static final String TAG = NotificationsActivity.class.getSimpleName();
 
-    private RecyclerView notificationsRecyclerView;
-    private NotificationAdapter adapter;
-    private NotificationReceiver notificationReceiver;
-    private List<NotificationItemModel> data;
+    public TestingUtils mTestingUtils;
+
+    private RecyclerView mNotificationsRecyclerView;
+    private NotificationAdapter mAdapter;
+    private NotificationReceiver mNotificationReceiver;
+    private List<NotificationItemModel> mData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifications);
 
-        notificationReceiver = new NotificationReceiver();
+        mTestingUtils = new TestingUtils(this);
+
+        mNotificationReceiver = new NotificationReceiver();
 
         initNotificationListRecyclerView();
 
@@ -53,36 +56,22 @@ public class NotificationsActivity extends AppCompatActivity {
 
         // Using LocalBroadcastManager instead of Context to registerReceiver and sendBroadcasts
         // to avoid exception: android.app.RemoteServiceException: can't deliver broadcast
-        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationReceiver, filter);
     }
 
     public void createNotification(View v) {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (notificationManager == null) {
-            return;
-        }
-        NotificationCompat.Builder notificationCompatBuilder = new NotificationCompat.Builder(this);
-        notificationCompatBuilder.setContentTitle("Test Notification");
-        notificationCompatBuilder.setContentText("Content for Test Notification");
-        notificationCompatBuilder.setSmallIcon(R.drawable.ic_launcher_background);
-        notificationCompatBuilder.setAutoCancel(true);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                                                                0,
-                                                                new Intent(this, NotificationsActivity.class),
-                                                                PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-        notificationCompatBuilder.setContentIntent(contentIntent);
-        notificationManager.notify((int) System.currentTimeMillis(), notificationCompatBuilder.build());
+        mTestingUtils.createNotification(v);
+        mTestingUtils.createInboxStyleNotification(v);
+        mTestingUtils.createInboxStyleNotification(v);
+        mTestingUtils.createInboxStyleNotification(v);
     }
 
     private void initNotificationListRecyclerView() {
-        data = new ArrayList<>();
-        adapter = new NotificationAdapter(data);
-        notificationsRecyclerView = findViewById(R.id.notification_list);
-        notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        notificationsRecyclerView.setAdapter(adapter);
+        mData = new ArrayList<>();
+        mAdapter = new NotificationAdapter(mData);
+        mNotificationsRecyclerView = findViewById(R.id.notification_list);
+        mNotificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        mNotificationsRecyclerView.setAdapter(mAdapter);
     }
 
     class NotificationReceiver extends BroadcastReceiver {
@@ -138,19 +127,19 @@ public class NotificationsActivity extends AppCompatActivity {
         private NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
             // go through the list to see if the notification with that groupKey already exists
             // if so, update that notification to position 0
-            for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).groupKey.equals(incomingNotification.groupKey)) {
+            for (int i = 0; i < mData.size(); i++) {
+                if (mData.get(i).groupKey.equals(incomingNotification.groupKey)) {
                     int position = i;
-                    NotificationItemModel existingNotification = data.get(position);
+                    NotificationItemModel existingNotification = mData.get(position);
 
-                    // also check if the parent notification is the same id
+                    // also check if the parent notification is the same mId
                     // if so update the relevant fields of parent notification
-                    // and then update the position of the parent notification in the adapter
-                    if (existingNotification.id == incomingNotification.id) {
+                    // and then update the position of the parent notification in the mAdapter
+                    if (existingNotification.mId == incomingNotification.mId) {
                         updateNotificationFields(existingNotification, incomingNotification);
-                        data.remove(position);
-                        data.add(0, existingNotification);
-                        adapter.notifyDataSetChanged();
+                        mData.remove(position);
+                        mData.add(0, existingNotification);
+                        mAdapter.notifyDataSetChanged();
                         return NotificationUpdateState.PARENT_NOTIFICATION_UPDATED;
                     }
 
@@ -158,21 +147,21 @@ public class NotificationsActivity extends AppCompatActivity {
                     // check if it is one of the sub-notifications
                     List<NotificationSubItemModel> subData = existingNotification.getSubData();
                     for (int j = 0; j < subData.size(); j++) {
-                        if (subData.get(j).id == incomingNotification.id) {
+                        if (subData.get(j).mId == incomingNotification.mId) {
                             int subPosition = j;
                             NotificationSubItemModel existingSubNotification = subData.get(subPosition);
 
                             // if notification already exists then update the relevant fields
-                            // and then update the subPosition of the sub-notification in the adapter
+                            // and then update the subPosition of the sub-notification in the mAdapter
                             updateNotificationFields(existingSubNotification, incomingNotification);
                             existingNotification.removeSubNotificationData(subPosition);
                             existingNotification.addSubNotificationData(existingSubNotification);
 
-                            // now update the parent notification's timestamp and location in adapter
+                            // now update the parent notification's timestamp and location in mAdapter
                             existingNotification.setTimestamp(incomingNotification.getTimestamp());
-                            data.remove(position);
-                            data.add(0, existingNotification);
-                            adapter.notifyDataSetChanged();
+                            mData.remove(position);
+                            mData.add(0, existingNotification);
+                            mAdapter.notifyDataSetChanged();
                             return NotificationUpdateState.SUB_NOTIFICATION_UPDATED;
                         }
                     }
@@ -181,18 +170,18 @@ public class NotificationsActivity extends AppCompatActivity {
                     // add notification to existingNotification's sub-notification list
                     existingNotification.addSubNotificationData(incomingNotification);
                     existingNotification.setTimestamp(incomingNotification.getTimestamp());
-                    data.remove(position);
-                    data.add(0, existingNotification);
-                    adapter.notifyDataSetChanged();
+                    mData.remove(position);
+                    mData.add(0, existingNotification);
+                    mAdapter.notifyDataSetChanged();
                     return NotificationUpdateState.NEW_SUB_NOTIFICATION_ADDED;
                 }
             }
 
             // if neither parent nor sub-notification exists
-            // create a new parent notification and add it to top of the adapter
+            // create a new parent notification and add it to top of the mAdapter
             NotificationItemModel newNotification = new NotificationItemModel(incomingNotification);
-            data.add(0, newNotification);
-            adapter.notifyDataSetChanged();
+            mData.add(0, newNotification);
+            mAdapter.notifyDataSetChanged();
             return NotificationUpdateState.NEW_PARENT_NOTIFICATION_ADDED;
         }
 
