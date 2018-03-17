@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.android.notify.R;
@@ -53,11 +54,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, e.getMessage());
         }
-        holder.seeMore.setOnTouchListener(new View.OnTouchListener() {
+        holder.showMore.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (v != null && event.getAction() == MotionEvent.ACTION_DOWN) {
-                    toggleDetailCardView(holder);
+                    toggleDetailCardView((Button) v);
                 }
                 return true;
             }
@@ -80,20 +81,23 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                                                                      RecyclerView.VERTICAL,
                                                                                      false));
         holder.notificationsSubRecyclerView.setAdapter(notificationItemModel.getSubAdapter());
-        holder.seeMore.setVisibility(textLines == null || textLines.equals("")
-                                     ? View.GONE
-                                     : View.VISIBLE);
+        holder.showMore.setVisibility(textLines == null || textLines.equals("")
+                                      ? View.GONE
+                                      : View.VISIBLE);
     }
 
-    private void toggleDetailCardView(@NonNull NotificationViewHolder holder) {
-        String text = (String) holder.notificationTextLines.getText();
-        boolean isShowMoreVisible = holder.seeMore.getText().equals(context.getString(R.string.show_more_btn_label));
-        holder.seeMore.setText(isShowMoreVisible
+    private void toggleDetailCardView(@NonNull Button showMoreButton) {
+        boolean isShowMoreVisible = showMoreButton.getVisibility() == View.VISIBLE && showMoreButton.getText()
+                                                                                                    .equals(context.getString(
+                                                                                                        R.string.show_more_btn_label));
+        showMoreButton.setText(isShowMoreVisible
                                ? context.getString(R.string.show_less_btn_label)
                                : context.getString(R.string.show_more_btn_label));
-        holder.notificationTextLines.setVisibility(isShowMoreVisible
-                                                   ? View.GONE
-                                                   : text != null && text.length() > 0 ? View.VISIBLE : View.GONE);
+
+        TextView textLinesTextView = ((View) showMoreButton.getParent()).findViewById(R.id.notification_text_lines);
+        textLinesTextView.setVisibility(isShowMoreVisible
+                                        ? showMoreButton.getVisibility() == View.GONE ? View.GONE : View.VISIBLE
+                                        : View.GONE);
     }
 
     private void deepLinkToApp(@NonNull final NotificationItemModel notificationItemModel) {
@@ -117,7 +121,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         TextView notificationTitle;
         TextView notificationText;
         TextView notificationTimestamp;
-        TextView seeMore;
+        Button showMore;
         TextView notificationTextLines;
         RecyclerView notificationsSubRecyclerView;
 
@@ -129,7 +133,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             notificationTitle = itemView.findViewById(R.id.notification_title);
             notificationText = itemView.findViewById(R.id.notification_text);
             notificationTimestamp = itemView.findViewById(R.id.notification_timestamp);
-            seeMore = itemView.findViewById(R.id.notification_see_more);
+            showMore = itemView.findViewById(R.id.notification_see_more);
             notificationTextLines = itemView.findViewById(R.id.notification_text_lines);
             notificationsSubRecyclerView = itemView.findViewById(R.id.notification_sub_list);
 
