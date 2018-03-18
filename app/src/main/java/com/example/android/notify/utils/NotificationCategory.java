@@ -38,7 +38,7 @@ public enum NotificationCategory {
     public static NotificationCategory getCategory(String category) {
         try {
             return NotificationCategory.valueOf(category.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException | IllegalArgumentException e) {
             Log.e(NotificationCategory.class.getSimpleName(), "No such category: " + category + "\n" + e.getMessage());
             return NONE;
         }
