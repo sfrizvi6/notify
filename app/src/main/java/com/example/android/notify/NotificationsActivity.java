@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -30,6 +31,9 @@ import com.example.android.notify.utils.TestingUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.android.notify.data.NotificationContract.NotificationEntry;
+import static com.example.android.notify.data.NotificationContract.NotificationEntry.TABLE_NAME;
+
 public class NotificationsActivity extends AppCompatActivity {
 
     private static final String TAG = NotificationsActivity.class.getSimpleName();
@@ -41,7 +45,7 @@ public class NotificationsActivity extends AppCompatActivity {
     private NotificationReceiver mNotificationReceiver;
     private List<NotificationItemModel> mData;
     private NotificationsDbHelper mDbHelper;
-    private SQLiteDatabase mDb;
+    private static SQLiteDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +69,51 @@ public class NotificationsActivity extends AppCompatActivity {
 
         mDbHelper = new NotificationsDbHelper(this);
         mDb = mDbHelper.getWritableDatabase();
+
+        recreatePersistedNotificationCards();
     }
 
     public void createNotification(View v) {
         mTestingUtils.createInboxStyleNotification(v);
+    }
+
+    private void recreatePersistedNotificationCards() {
+        Cursor cursor = mDb.query(TABLE_NAME, null, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(NotificationEntry.COLUMN_NOTIFICATION_ID));
+            String category = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_NOTIFICATION_CATEGORY));
+            String appName = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_NAME));
+            int icon = cursor.getInt(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_ICON));
+            // TODO: figure this out
+            Bitmap largeIcon = null;
+            String packageName = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_PACKAGE_NAME));
+            // TODO: figure this out
+            PendingIntent pendingIntent = null;
+            String groupKey = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_GROUP_KEY));
+            String title = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TITLE));
+            String text = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXT));
+            String timestamp = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TIMESTAMP));
+            String textLinesString = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXTLINES));
+
+            NotificationSubItemModel recreatedNotification =
+                new NotificationSubItemModel(this,
+                                             id,
+                                             NotificationCategory.getCategory(category),
+                                             appName,
+                                             icon,
+                                             largeIcon,
+                                             packageName,
+                                             pendingIntent,
+                                             groupKey,
+                                             title,
+                                             text,
+                                             timestamp,
+                                             textLinesString);
+            Log.e(TAG, NotificationUpdateState.RECREATED_NOTIFICATION.toString());
+            Log.e(TAG,
+                  mNotificationReceiver.updateNotificationSubCardIfNotificationPackageExists(recreatedNotification)
+                                       .toString());
+        }
     }
 
     private void initNotificationListRecyclerView() {
@@ -98,11 +143,16 @@ public class NotificationsActivity extends AppCompatActivity {
             String groupKey = statusBarNotification.getGroupKey();
             ApplicationInfo appInfo = (ApplicationInfo) extras.get("android.appInfo");
             PackageManager packageManager = getApplicationContext().getPackageManager();
-            String appName = packageManager.getApplicationLabel(appInfo).toString();
             String category = statusBarNotification.getNotification().category;
+            String appName = packageManager.getApplicationLabel(appInfo).toString();
             PendingIntent deepLinkIntent = statusBarNotification.getNotification().contentIntent;
             String title = extras.getString("android.title");
-            String text = extras.getString("android.text");
+            /*
+             * TODO: Key android.text expected String but value was a android.text.SpannableString.
+             * The default value <null> was returned.
+             * java.lang.ClassCastException: android.text.SpannableString cannot be cast to java.lang.String
+             */
+            String text = String.valueOf(extras.get("android.text"));
             CharSequence[] textLines = (CharSequence[]) extras.get("android.textLines");
 
             StringBuilder textLinesString = new StringBuilder();
