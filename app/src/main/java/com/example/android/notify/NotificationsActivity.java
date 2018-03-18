@@ -61,7 +61,8 @@ public class NotificationsActivity extends AppCompatActivity {
         mDbHelper = new NotificationsDbHelper(this);
         mDb = mDbHelper.getWritableDatabase();
 
-        mNotificationReceiver = new NotificationReceiver(mDb, mDbHelper, mData, mAdapter);
+        mNotificationReceiver =
+            new NotificationReceiver(this, getSupportLoaderManager(), mDb, mDbHelper, mData, mAdapter);
         // Using LocalBroadcastManager instead of Context to registerReceiver and sendBroadcasts
         // to avoid exception: android.app.RemoteServiceException: can't deliver broadcast
         LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationReceiver, filter);

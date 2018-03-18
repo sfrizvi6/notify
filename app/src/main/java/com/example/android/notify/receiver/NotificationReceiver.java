@@ -1,40 +1,46 @@
 package com.example.android.notify.receiver;
 
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
-import android.text.format.DateUtils;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import com.example.android.notify.adapters.NotificationAdapter;
 import com.example.android.notify.data.NotificationsDbHelper;
 import com.example.android.notify.itemmodels.NotificationItemModel;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
-import com.example.android.notify.utils.NotificationCategory;
+import com.example.android.notify.loader.ParseNotificationLoader;
 import com.example.android.notify.utils.NotificationUpdateState;
 
 import java.util.List;
 
-public class NotificationReceiver extends BroadcastReceiver {
+public class NotificationReceiver extends BroadcastReceiver
+    implements LoaderManager.LoaderCallbacks<NotificationSubItemModel> {
 
     private static final String TAG = NotificationReceiver.class.getSimpleName();
+    private static final int PARSE_NOTIFICATION_LOADER_ID = 0;
 
+    private Context mContext;
     private NotificationAdapter mAdapter;
     private NotificationsDbHelper mDbHelper;
     private List<NotificationItemModel> mData;
+    private StatusBarNotification mStatusBarNotification;
+    private LoaderManager mLoaderManager;
     private static SQLiteDatabase mDb;
 
-    public NotificationReceiver(SQLiteDatabase db,
+    public NotificationReceiver(Context context, LoaderManager loaderManager, SQLiteDatabase db,
                                 NotificationsDbHelper dbHelper,
                                 List<NotificationItemModel> data,
                                 NotificationAdapter adapter) {
+        mContext = context;
+        mLoaderManager = loaderManager;
         mDb = db;
         mDbHelper = dbHelper;
         mData = data;
@@ -43,60 +49,14 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        StatusBarNotification statusBarNotification =
+        mStatusBarNotification =
             (StatusBarNotification) intent.getExtras().get("com.example.notify.notification_created_event");
-        if (statusBarNotification == null) {
+        if (mStatusBarNotification == null) {
             return;
         }
-        Bundle extras = statusBarNotification.getNotification().extras;
-
-        String packageName = statusBarNotification.getPackageName();
-        if (packageName == null || packageName.equals("")) {
-            return;
-        }
-
-        String groupKey = statusBarNotification.getGroupKey();
-        ApplicationInfo appInfo = (ApplicationInfo) extras.get("android.appInfo");
-        PackageManager packageManager = context.getApplicationContext().getPackageManager();
-        String category = statusBarNotification.getNotification().category;
-        String appName = packageManager.getApplicationLabel(appInfo).toString();
-        PendingIntent deepLinkIntent = statusBarNotification.getNotification().contentIntent;
-        String title = extras.getString("android.title");
-            /*
-             * TODO: Key android.text expected String but value was a android.text.SpannableString.
-             * The default value <null> was returned.
-             * java.lang.ClassCastException: android.text.SpannableString cannot be cast to java.lang.String
-             */
-        String text = String.valueOf(extras.get("android.text"));
-        CharSequence[] textLines = (CharSequence[]) extras.get("android.textLines");
-
-        StringBuilder textLinesString = new StringBuilder();
-        if (textLines != null) {
-            for (int i = 0; i < textLines.length; i++) {
-                textLinesString.append(textLines[i]).append(i < textLines.length - 1 ? "\n" : "");
-            }
-        }
-        int icon = extras.getInt("android.icon");
-        Bitmap largeIcon = (Bitmap) extras.get("android.largeIcon");
-        int notificationId = statusBarNotification.getId();
-        String timestamp = DateUtils.formatDateTime(context,
-                                                    statusBarNotification.getPostTime(),
-                                                    DateUtils.FORMAT_SHOW_TIME);
-        NotificationSubItemModel incomingNotification =
-            new NotificationSubItemModel(context, notificationId,
-                                         NotificationCategory.getCategory(category),
-                                         appName,
-                                         icon,
-                                         largeIcon,
-                                         packageName,
-                                         deepLinkIntent,
-                                         groupKey,
-                                         title,
-                                         text,
-                                         timestamp,
-                                         textLinesString.toString());
-        mDbHelper.persistNotification(mDb, incomingNotification);
-        Log.e(TAG, updateNotificationSubCardIfNotificationPackageExists(incomingNotification).toString());
+        mLoaderManager.initLoader(PARSE_NOTIFICATION_LOADER_ID,
+                                  null,
+                                  this);
     }
 
     public NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
@@ -158,6 +118,22 @@ public class NotificationReceiver extends BroadcastReceiver {
         mData.add(0, newNotification);
         mAdapter.notifyDataSetChanged();
         return NotificationUpdateState.NEW_PARENT_NOTIFICATION_ADDED;
+    }
+
+    @NonNull
+    @Override
+    public Loader<NotificationSubItemModel> onCreateLoader(int id, @Nullable Bundle args) {
+        return new ParseNotificationLoader(mContext, mStatusBarNotification, mDbHelper, mDb);
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<NotificationSubItemModel> loader,
+                               NotificationSubItemModel incomingNotification) {
+        Log.e(TAG, updateNotificationSubCardIfNotificationPackageExists(incomingNotification).toString());
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<NotificationSubItemModel> loader) {
     }
 
     private void updateNotificationFields(NotificationSubItemModel existingNotification,
