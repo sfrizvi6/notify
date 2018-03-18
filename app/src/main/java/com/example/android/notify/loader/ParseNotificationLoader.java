@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
@@ -17,28 +16,23 @@ import com.example.android.notify.utils.NotificationCategory;
 
 public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItemModel> {
 
+    private static final String TAG = ParseNotificationLoader.class.getSimpleName();
+
     private NotificationSubItemModel mNotificationSubItemModel;
     private StatusBarNotification mStatusBarNotification;
     private NotificationsDbHelper mDbHelper;
-    private SQLiteDatabase mDb;
 
     public ParseNotificationLoader(Context context,
                                    StatusBarNotification statusBarNotification,
-                                   NotificationsDbHelper dbHelper,
-                                   SQLiteDatabase db) {
+                                   NotificationsDbHelper dbHelper) {
         super(context);
         mStatusBarNotification = statusBarNotification;
         mDbHelper = dbHelper;
-        mDb = db;
     }
 
     @Override
     protected void onStartLoading() {
-        if (mNotificationSubItemModel != null) {
-            deliverResult(mNotificationSubItemModel);
-        } else {
-            forceLoad();
-        }
+        forceLoad();
     }
 
     @Override
@@ -93,7 +87,7 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
 
     public void deliverResult(NotificationSubItemModel parsedNotificationSubItemModel) {
         mNotificationSubItemModel = parsedNotificationSubItemModel;
-        mDbHelper.persistNotification(mDb, mNotificationSubItemModel);
+        mDbHelper.persistNotification(mNotificationSubItemModel);
         super.deliverResult(parsedNotificationSubItemModel);
     }
 }

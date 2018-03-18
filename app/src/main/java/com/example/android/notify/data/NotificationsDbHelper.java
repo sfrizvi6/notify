@@ -14,6 +14,8 @@ import static com.example.android.notify.data.NotificationContract.NotificationE
 
 public class NotificationsDbHelper extends SQLiteOpenHelper {
 
+    private SQLiteDatabase mDb;
+
     private static final String SQL_CREATE_NOTIFICATIONS_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
         NotificationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
         NotificationEntry.COLUMN_NOTIFICATION_ID + " INTEGER NOT NULL, " +
@@ -40,6 +42,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
 
     public NotificationsDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        mDb = getWritableDatabase();
     }
 
     @Override
@@ -53,7 +56,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void persistNotification(SQLiteDatabase db, NotificationSubItemModel notificationSubItemModel) {
+    public void persistNotification(NotificationSubItemModel notificationSubItemModel) {
         ContentValues notificationDbContent = new ContentValues();
         notificationDbContent.put(NotificationEntry.COLUMN_NOTIFICATION_ID, notificationSubItemModel.mId);
         notificationDbContent.put(NotificationEntry.COLUMN_NOTIFICATION_CATEGORY,
@@ -70,8 +73,18 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
         notificationDbContent.put(NotificationEntry.COLUMN_TEXT, notificationSubItemModel.getText());
         notificationDbContent.put(NotificationEntry.COLUMN_TIMESTAMP, notificationSubItemModel.getTimestamp());
         notificationDbContent.put(NotificationEntry.COLUMN_TEXTLINES, notificationSubItemModel.getTextLines());
-        db.insert(TABLE_NAME, null, notificationDbContent);
-        Cursor cursor = db.query(TABLE_NAME, null, null, null, null, null, null);
+        mDb.insert(TABLE_NAME, null, notificationDbContent);
+        Cursor cursor = mDb.query(TABLE_NAME, null, null, null, null, null, null);
         cursor.getCount();
+    }
+
+    public Cursor queryAllNotifications() {
+        return mDb.query(TABLE_NAME, null, null, null, null, null, null);
+    }
+
+    // TODO: remove; for testing only
+    public void cleanInitDb() {
+        mDb.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        mDb.execSQL(SQL_CREATE_NOTIFICATIONS_TABLE);
     }
 }

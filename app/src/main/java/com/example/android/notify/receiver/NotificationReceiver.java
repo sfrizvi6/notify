@@ -4,7 +4,6 @@ package com.example.android.notify.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
@@ -33,15 +32,13 @@ public class NotificationReceiver extends BroadcastReceiver
     private List<NotificationItemModel> mData;
     private StatusBarNotification mStatusBarNotification;
     private LoaderManager mLoaderManager;
-    private static SQLiteDatabase mDb;
 
-    public NotificationReceiver(Context context, LoaderManager loaderManager, SQLiteDatabase db,
+    public NotificationReceiver(Context context, LoaderManager loaderManager,
                                 NotificationsDbHelper dbHelper,
                                 List<NotificationItemModel> data,
                                 NotificationAdapter adapter) {
         mContext = context;
         mLoaderManager = loaderManager;
-        mDb = db;
         mDbHelper = dbHelper;
         mData = data;
         mAdapter = adapter;
@@ -123,17 +120,20 @@ public class NotificationReceiver extends BroadcastReceiver
     @NonNull
     @Override
     public Loader<NotificationSubItemModel> onCreateLoader(int id, @Nullable Bundle args) {
-        return new ParseNotificationLoader(mContext, mStatusBarNotification, mDbHelper, mDb);
+        return new ParseNotificationLoader(mContext, mStatusBarNotification, mDbHelper);
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<NotificationSubItemModel> loader,
                                NotificationSubItemModel incomingNotification) {
         Log.e(TAG, updateNotificationSubCardIfNotificationPackageExists(incomingNotification).toString());
+        mLoaderManager.destroyLoader(PARSE_NOTIFICATION_LOADER_ID);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<NotificationSubItemModel> loader) {
+        mData.clear();
+        mAdapter.notifyDataSetChanged();
     }
 
     private void updateNotificationFields(NotificationSubItemModel existingNotification,

@@ -4,7 +4,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.android.notify.data.NotificationContract.NotificationEntry;
-import static com.example.android.notify.data.NotificationContract.NotificationEntry.TABLE_NAME;
 
 public class NotificationsActivity extends AppCompatActivity {
 
@@ -40,7 +38,6 @@ public class NotificationsActivity extends AppCompatActivity {
     private NotificationReceiver mNotificationReceiver;
     private List<NotificationItemModel> mData;
     private NotificationsDbHelper mDbHelper;
-    private static SQLiteDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +56,12 @@ public class NotificationsActivity extends AppCompatActivity {
 
 
         mDbHelper = new NotificationsDbHelper(this);
-        mDb = mDbHelper.getWritableDatabase();
+
+        // TODO: for testing only
+//        mDbHelper.cleanInitDb();
 
         mNotificationReceiver =
-            new NotificationReceiver(this, getSupportLoaderManager(), mDb, mDbHelper, mData, mAdapter);
+            new NotificationReceiver(this, getSupportLoaderManager(), mDbHelper, mData, mAdapter);
         // Using LocalBroadcastManager instead of Context to registerReceiver and sendBroadcasts
         // to avoid exception: android.app.RemoteServiceException: can't deliver broadcast
         LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationReceiver, filter);
@@ -74,7 +73,12 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void recreatePersistedNotificationCards() {
-        Cursor cursor = mDb.query(TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursor = mDbHelper.queryAllNotifications();
+
+        if (cursor == null) {
+            return;
+        }
+
         while (cursor.moveToNext()) {
             int id = cursor.getInt(cursor.getColumnIndex(NotificationEntry.COLUMN_NOTIFICATION_ID));
             String category = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_NOTIFICATION_CATEGORY));
