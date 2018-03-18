@@ -15,7 +15,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class TestingUtils {
 
-    public final Context mContext;
+    private final Context mContext;
 
     public TestingUtils(Context context) {
         this.mContext = context;

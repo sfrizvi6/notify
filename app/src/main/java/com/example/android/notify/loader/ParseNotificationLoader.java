@@ -18,7 +18,6 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
 
     private static final String TAG = ParseNotificationLoader.class.getSimpleName();
 
-    private NotificationSubItemModel mNotificationSubItemModel;
     private StatusBarNotification mStatusBarNotification;
     private NotificationsDbHelper mDbHelper;
 
@@ -86,8 +85,7 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
     }
 
     public void deliverResult(NotificationSubItemModel parsedNotificationSubItemModel) {
-        mNotificationSubItemModel = parsedNotificationSubItemModel;
-        mDbHelper.persistNotification(mNotificationSubItemModel);
+        mDbHelper.persistNotification(parsedNotificationSubItemModel);
         super.deliverResult(parsedNotificationSubItemModel);
     }
 }

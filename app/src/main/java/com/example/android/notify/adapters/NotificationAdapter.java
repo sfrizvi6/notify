@@ -28,6 +28,10 @@ import static android.content.ContentValues.TAG;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
+    public List<NotificationItemModel> getNotificationList() {
+        return mNotificationList;
+    }
+
     private List<NotificationItemModel> mNotificationList;
     private Context mContext;
 
@@ -86,6 +90,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                       : View.VISIBLE);
     }
 
+    @Override
+    public int getItemCount() {
+        return mNotificationList == null ? 0 : mNotificationList.size();
+    }
+
+    public void addNotification(NotificationItemModel newNotificationItemModel) {
+        mNotificationList.add(0, newNotificationItemModel);
+        notifyDataSetChanged();
+    }
+
+    public void updateNotification(int position, NotificationItemModel notificationItemModel) {
+        mNotificationList.remove(position);
+        mNotificationList.add(0, notificationItemModel);
+        notifyDataSetChanged();
+    }
+
     private void toggleDetailCardView(@NonNull Button showMoreButton) {
         boolean isShowMoreVisible = showMoreButton.getVisibility() == View.VISIBLE && showMoreButton.getText()
                                                                                                     .equals(mContext.getString(
@@ -106,11 +126,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         } catch (PendingIntent.CanceledException e) {
             Log.e(TAG, e.getMessage());
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return mNotificationList == null ? 0 : mNotificationList.size();
     }
 
     class NotificationViewHolder extends RecyclerView.ViewHolder {
@@ -136,7 +151,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             nShowMore = itemView.findViewById(R.id.notification_see_more);
             mNotificationTextLines = itemView.findViewById(R.id.notification_text_lines);
             mNotificationsSubRecyclerView = itemView.findViewById(R.id.notification_sub_list);
-
         }
     }
 }

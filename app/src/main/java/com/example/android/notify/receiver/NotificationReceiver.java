@@ -29,18 +29,15 @@ public class NotificationReceiver extends BroadcastReceiver
     private Context mContext;
     private NotificationAdapter mAdapter;
     private NotificationsDbHelper mDbHelper;
-    private List<NotificationItemModel> mData;
     private StatusBarNotification mStatusBarNotification;
     private LoaderManager mLoaderManager;
 
     public NotificationReceiver(Context context, LoaderManager loaderManager,
                                 NotificationsDbHelper dbHelper,
-                                List<NotificationItemModel> data,
                                 NotificationAdapter adapter) {
         mContext = context;
         mLoaderManager = loaderManager;
         mDbHelper = dbHelper;
-        mData = data;
         mAdapter = adapter;
     }
 
@@ -59,19 +56,18 @@ public class NotificationReceiver extends BroadcastReceiver
     public NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
         // go through the list to see if the notification with that groupKey already exists
         // if so, update that notification to position 0
-        for (int i = 0; i < mData.size(); i++) {
-            if (mData.get(i).mGroupKey.equals(incomingNotification.mGroupKey)) {
+        List<NotificationItemModel> data = mAdapter.getNotificationList();
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).mGroupKey.equals(incomingNotification.mGroupKey)) {
                 int position = i;
-                NotificationItemModel existingNotification = mData.get(position);
+                NotificationItemModel existingNotification = data.get(position);
 
                 // also check if the parent notification is the same mId
                 // if so update the relevant fields of parent notification
                 // and then update the position of the parent notification in the mAdapter
                 if (existingNotification.mId == incomingNotification.mId) {
                     updateNotificationFields(existingNotification, incomingNotification);
-                    mData.remove(position);
-                    mData.add(0, existingNotification);
-                    mAdapter.notifyDataSetChanged();
+                    mAdapter.updateNotification(position, existingNotification);
                     return NotificationUpdateState.PARENT_NOTIFICATION_UPDATED;
                 }
 
@@ -91,9 +87,7 @@ public class NotificationReceiver extends BroadcastReceiver
 
                         // now update the parent notification's timestamp and location in mAdapter
                         existingNotification.setTimestamp(incomingNotification.getTimestamp());
-                        mData.remove(position);
-                        mData.add(0, existingNotification);
-                        mAdapter.notifyDataSetChanged();
+                        mAdapter.updateNotification(position, existingNotification);
                         return NotificationUpdateState.SUB_NOTIFICATION_UPDATED;
                     }
                 }
@@ -102,9 +96,7 @@ public class NotificationReceiver extends BroadcastReceiver
                 // add notification to existingNotification's sub-notification list
                 existingNotification.addSubNotificationData(incomingNotification);
                 existingNotification.setTimestamp(incomingNotification.getTimestamp());
-                mData.remove(position);
-                mData.add(0, existingNotification);
-                mAdapter.notifyDataSetChanged();
+                mAdapter.updateNotification(position, existingNotification);
                 return NotificationUpdateState.NEW_SUB_NOTIFICATION_ADDED;
             }
         }
@@ -112,14 +104,14 @@ public class NotificationReceiver extends BroadcastReceiver
         // if neither parent nor sub-notification exists
         // create a new parent notification and add it to top of the mAdapter
         NotificationItemModel newNotification = new NotificationItemModel(incomingNotification);
-        mData.add(0, newNotification);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.addNotification(newNotification);
         return NotificationUpdateState.NEW_PARENT_NOTIFICATION_ADDED;
     }
 
     @NonNull
     @Override
     public Loader<NotificationSubItemModel> onCreateLoader(int id, @Nullable Bundle args) {
+        // TODO: find out if the loader should be implemented in NotificationsActivity instead since it should be called in the Main Thread
         return new ParseNotificationLoader(mContext, mStatusBarNotification, mDbHelper);
     }
 
@@ -132,8 +124,6 @@ public class NotificationReceiver extends BroadcastReceiver
 
     @Override
     public void onLoaderReset(@NonNull Loader<NotificationSubItemModel> loader) {
-        mData.clear();
-        mAdapter.notifyDataSetChanged();
     }
 
     private void updateNotificationFields(NotificationSubItemModel existingNotification,

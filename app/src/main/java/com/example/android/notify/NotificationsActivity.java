@@ -23,7 +23,6 @@ import com.example.android.notify.utils.NotificationUpdateState;
 import com.example.android.notify.utils.TestingUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.example.android.notify.data.NotificationContract.NotificationEntry;
 
@@ -33,10 +32,8 @@ public class NotificationsActivity extends AppCompatActivity {
 
     public TestingUtils mTestingUtils;
 
-    private RecyclerView mNotificationsRecyclerView;
     private NotificationAdapter mAdapter;
     private NotificationReceiver mNotificationReceiver;
-    private List<NotificationItemModel> mData;
     private NotificationsDbHelper mDbHelper;
 
     @Override
@@ -61,7 +58,7 @@ public class NotificationsActivity extends AppCompatActivity {
 //        mDbHelper.cleanInitDb();
 
         mNotificationReceiver =
-            new NotificationReceiver(this, getSupportLoaderManager(), mDbHelper, mData, mAdapter);
+            new NotificationReceiver(this, getSupportLoaderManager(), mDbHelper, mAdapter);
         // Using LocalBroadcastManager instead of Context to registerReceiver and sendBroadcasts
         // to avoid exception: android.app.RemoteServiceException: can't deliver broadcast
         LocalBroadcastManager.getInstance(this).registerReceiver(mNotificationReceiver, filter);
@@ -117,9 +114,8 @@ public class NotificationsActivity extends AppCompatActivity {
     }
 
     private void initNotificationListRecyclerView() {
-        mData = new ArrayList<>();
-        mAdapter = new NotificationAdapter(mData);
-        mNotificationsRecyclerView = findViewById(R.id.notification_list);
+        mAdapter = new NotificationAdapter(new ArrayList<NotificationItemModel>());
+        RecyclerView mNotificationsRecyclerView = findViewById(R.id.notification_list);
         mNotificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         mNotificationsRecyclerView.setAdapter(mAdapter);
     }

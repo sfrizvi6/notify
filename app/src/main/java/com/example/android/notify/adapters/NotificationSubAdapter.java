@@ -2,7 +2,6 @@ package com.example.android.notify.adapters;
 
 
 import android.app.PendingIntent;
-import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -23,7 +22,6 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
     private static final String TAG = NotificationSubAdapter.class.getSimpleName();
 
     private List<NotificationSubItemModel> mNotificationList;
-    private Context mContext;
 
     public NotificationSubAdapter(List<NotificationSubItemModel> notificationList) {
         this.mNotificationList = notificationList;
@@ -32,7 +30,6 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
     @NonNull
     @Override
     public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        mContext = parent.getContext();
         return new NotificationViewHolder(LayoutInflater.from(parent.getContext())
                                                         .inflate(R.layout.notification_sub_item, parent, false));
     }

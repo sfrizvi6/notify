@@ -37,7 +37,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
                  */
         " UNIQUE (" + NotificationEntry.COLUMN_NOTIFICATION_ID + ") ON CONFLICT REPLACE);";
 
-    public static final String DATABASE_NAME = "notifications.db";
+    private static final String DATABASE_NAME = "notifications.db";
     private static final int DATABASE_VERSION = 1;
 
     public NotificationsDbHelper(Context context) {
@@ -74,8 +74,6 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
         notificationDbContent.put(NotificationEntry.COLUMN_TIMESTAMP, notificationSubItemModel.getTimestamp());
         notificationDbContent.put(NotificationEntry.COLUMN_TEXTLINES, notificationSubItemModel.getTextLines());
         mDb.insert(TABLE_NAME, null, notificationDbContent);
-        Cursor cursor = mDb.query(TABLE_NAME, null, null, null, null, null, null);
-        cursor.getCount();
     }
 
     public Cursor queryAllNotifications() {
