@@ -65,6 +65,12 @@ public class NotificationsActivity extends AppCompatActivity {
         recreatePersistedNotificationCards();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDbHelper.close();
+    }
+
     public void createNotification(View v) {
         mTestingUtils.createInboxStyleNotification(v);
     }
