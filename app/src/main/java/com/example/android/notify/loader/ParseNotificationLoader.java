@@ -16,8 +16,6 @@ import com.example.android.notify.utils.NotificationCategory;
 
 public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItemModel> {
 
-    private static final String TAG = ParseNotificationLoader.class.getSimpleName();
-
     private StatusBarNotification mStatusBarNotification;
     private NotificationsDbHelper mDbHelper;
 

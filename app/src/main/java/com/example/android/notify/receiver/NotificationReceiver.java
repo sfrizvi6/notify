@@ -20,8 +20,7 @@ import com.example.android.notify.utils.NotificationUpdateState;
 
 import java.util.List;
 
-public class NotificationReceiver extends BroadcastReceiver
-    implements LoaderManager.LoaderCallbacks<NotificationSubItemModel> {
+public class NotificationReceiver extends BroadcastReceiver {
 
     private static final String TAG = NotificationReceiver.class.getSimpleName();
     private static final int PARSE_NOTIFICATION_LOADER_ID = 0;
@@ -31,6 +30,7 @@ public class NotificationReceiver extends BroadcastReceiver
     private NotificationsDbHelper mDbHelper;
     private StatusBarNotification mStatusBarNotification;
     private LoaderManager mLoaderManager;
+    private LoaderManager.LoaderCallbacks<NotificationSubItemModel> mParseNotificationLoaderListener;
 
     public NotificationReceiver(Context context, LoaderManager loaderManager,
                                 NotificationsDbHelper dbHelper,
@@ -39,6 +39,28 @@ public class NotificationReceiver extends BroadcastReceiver
         mLoaderManager = loaderManager;
         mDbHelper = dbHelper;
         mAdapter = adapter;
+
+        mParseNotificationLoaderListener =
+            new LoaderManager.LoaderCallbacks<NotificationSubItemModel>() {
+                @NonNull
+                @Override
+                public Loader<NotificationSubItemModel> onCreateLoader(int id, @Nullable Bundle args) {
+                    // TODO: find out if the loader should be implemented in NotificationsActivity instead since it should be called in the Main Thread
+                    return new ParseNotificationLoader(mContext, mStatusBarNotification, mDbHelper);
+                }
+
+                @Override
+                public void onLoadFinished(@NonNull Loader<NotificationSubItemModel> loader,
+                                           NotificationSubItemModel incomingNotification) {
+                    Log.e(TAG, updateNotificationSubCardIfNotificationPackageExists(incomingNotification).toString());
+                    mLoaderManager.destroyLoader(PARSE_NOTIFICATION_LOADER_ID);
+                }
+
+                @Override
+                public void onLoaderReset(@NonNull Loader<NotificationSubItemModel> loader) {
+                }
+            };
+
     }
 
     @Override
@@ -48,9 +70,17 @@ public class NotificationReceiver extends BroadcastReceiver
         if (mStatusBarNotification == null) {
             return;
         }
+
         mLoaderManager.initLoader(PARSE_NOTIFICATION_LOADER_ID,
                                   null,
-                                  this);
+                                  mParseNotificationLoaderListener);
+    }
+
+    public NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(List<NotificationSubItemModel> recreateNotificationCardList) {
+        for (NotificationSubItemModel cardToRecreate : recreateNotificationCardList) {
+            updateNotificationSubCardIfNotificationPackageExists(cardToRecreate);
+        }
+        return NotificationUpdateState.RECREATED_NOTIFICATION;
     }
 
     public NotificationUpdateState updateNotificationSubCardIfNotificationPackageExists(NotificationSubItemModel incomingNotification) {
@@ -106,24 +136,6 @@ public class NotificationReceiver extends BroadcastReceiver
         NotificationItemModel newNotification = new NotificationItemModel(incomingNotification);
         mAdapter.addNotification(newNotification);
         return NotificationUpdateState.NEW_PARENT_NOTIFICATION_ADDED;
-    }
-
-    @NonNull
-    @Override
-    public Loader<NotificationSubItemModel> onCreateLoader(int id, @Nullable Bundle args) {
-        // TODO: find out if the loader should be implemented in NotificationsActivity instead since it should be called in the Main Thread
-        return new ParseNotificationLoader(mContext, mStatusBarNotification, mDbHelper);
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<NotificationSubItemModel> loader,
-                               NotificationSubItemModel incomingNotification) {
-        Log.e(TAG, updateNotificationSubCardIfNotificationPackageExists(incomingNotification).toString());
-        mLoaderManager.destroyLoader(PARSE_NOTIFICATION_LOADER_ID);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<NotificationSubItemModel> loader) {
     }
 
     private void updateNotificationFields(NotificationSubItemModel existingNotification,

@@ -7,8 +7,6 @@ import com.example.android.notify.utils.NotificationCategory;
 
 public class NotificationSubItemModel {
 
-    private static final String TAG = NotificationSubItemModel.class.getSimpleName();
-
     final Context mContext;
     public final int mId;
     public final NotificationCategory mCategory;
