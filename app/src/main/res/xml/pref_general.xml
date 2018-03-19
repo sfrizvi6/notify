@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="@string/day_one"
+        android:entries="@array/pref_num_days_values"
+        android:entryValues="@array/pref_num_days_values"
+        android:key="@string/pref_days_key"
+        android:title="@string/pref_days_label"/>
+</PreferenceScreen>

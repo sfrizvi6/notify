@@ -57,7 +57,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 mContext.getPackageManager().getResourcesForApplication(notificationItemModel.mPackageName);
             Drawable icon = res.getDrawable(notificationItemModel.mAppIcon);
             holder.mNotificationImage.setImageDrawable(icon);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Resources.NotFoundException | PackageManager.NameNotFoundException e) {
             Log.e(TAG, e.getMessage());
         }
         holder.nShowMore.setOnTouchListener(new View.OnTouchListener() {

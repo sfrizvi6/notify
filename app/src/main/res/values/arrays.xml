@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_num_days_option">
+        <item>@string/day_one_label</item>
+        <item>@string/day_two_label</item>
+        <item>@string/day_three_label</item>
+    </string-array>
+
+    <string-array name="pref_num_days_values">
+        <item>@string/day_one</item>
+        <item>@string/day_two</item>
+        <item>@string/day_three</item>
+    </string-array>
+</resources>

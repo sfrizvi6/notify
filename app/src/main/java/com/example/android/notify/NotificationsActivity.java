@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import com.example.android.notify.adapters.NotificationAdapter;
 import com.example.android.notify.data.NotificationsDbHelper;
@@ -20,6 +23,7 @@ import com.example.android.notify.itemmodels.NotificationSubItemModel;
 import com.example.android.notify.loader.RecreateNotificationLoader;
 import com.example.android.notify.receiver.NotificationReceiver;
 import com.example.android.notify.services.NotifyListenerService;
+import com.example.android.notify.settings.SettingsActivity;
 import com.example.android.notify.utils.TestingUtils;
 
 import java.util.ArrayList;
@@ -88,6 +92,25 @@ public class NotificationsActivity extends AppCompatActivity {
             };
 
         getSupportLoaderManager().initLoader(RECREATE_NOTIFICATION_LOADER_ID, null, recreateNotificationListener);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.settings) {
+            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
+            startActivity(startSettingsActivity);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
