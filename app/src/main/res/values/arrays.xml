@@ -7,8 +7,8 @@
     </string-array>
 
     <string-array name="pref_num_days_values">
-        <item>@integer/day_one</item>
-        <item>@integer/day_two</item>
-        <item>@integer/day_three</item>
+        <item>@string/day_one</item>
+        <item>@string/day_two</item>
+        <item>@string/day_three</item>
     </string-array>
 </resources>

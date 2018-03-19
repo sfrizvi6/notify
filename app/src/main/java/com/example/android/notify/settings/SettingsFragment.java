@@ -49,16 +49,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
     }
 
     private void setPreferenceSummary(Preference preference, Object value) {
-        String stringValue = value.toString();
-
+        String valueString = String.valueOf(value);
         if (preference instanceof ListPreference) {
             ListPreference listPreference = (ListPreference) preference;
-            int prefIndex = listPreference.findIndexOfValue(stringValue);
+            int prefIndex = listPreference.findIndexOfValue(valueString);
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
         } else {
-            preference.setSummary(stringValue);
+            preference.setSummary(valueString);
         }
     }
 }
