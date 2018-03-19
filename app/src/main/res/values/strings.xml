@@ -10,13 +10,7 @@
     <string name="day_one_label">1 day</string>
     <string name="day_two_label">2 days</string>
     <string name="day_three_label">3 days</string>
-    <string name="day_one">1</string>
-    <string name="day_two">2</string>
-    <string name="day_three">3</string>
 
     <!--Content Descriptors-->
     <string name="app_icon_content_description">App notification icon</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

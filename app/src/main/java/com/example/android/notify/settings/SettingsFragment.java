@@ -30,6 +30,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
         Preference preference = findPreference(key);
         if (null != preference) {
             setPreferenceSummary(preference, sharedPreferences.getString(key, ""));
+            // TODO: Recreate notification view if current days is < new set #. days
         }
     }
 
