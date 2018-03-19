@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -86,8 +88,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                                                                       false));
         holder.mNotificationsSubRecyclerView.setAdapter(notificationItemModel.getSubAdapter());
         holder.nShowMore.setVisibility(textLines == null || textLines.equals("")
-                                      ? View.GONE
-                                      : View.VISIBLE);
+                                       ? View.GONE
+                                       : View.VISIBLE);
     }
 
     @Override
@@ -115,15 +117,25 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                : mContext.getString(R.string.show_more_btn_label));
 
         TextView textLinesTextView = ((View) showMoreButton.getParent()).findViewById(R.id.notification_text_lines);
-        textLinesTextView.setVisibility(isShowMoreVisible
-                                        ? showMoreButton.getVisibility() == View.GONE ? View.GONE : View.VISIBLE
-                                        : View.GONE);
+        //                textLinesTextView.setVisibility(isShowMoreVisible
+        //                                                ? View.VISIBLE
+        //                                                : View.GONE);
+        Animation animationUp = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_up);
+        Animation animationDown = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_down);
+        if (isShowMoreVisible) {
+            textLinesTextView.setVisibility(View.VISIBLE);
+            textLinesTextView.setAnimation(animationDown);
+        } else {
+            textLinesTextView.setVisibility(View.GONE);
+            textLinesTextView.setAnimation(animationUp);
+        }
     }
 
     private void deepLinkToApp(@NonNull final NotificationItemModel notificationItemModel) {
         try {
             notificationItemModel.mPendingIntent.send();
-        } catch (PendingIntent.CanceledException e) {
+            // TODO: temporarily catching NPE for sending empty PendingIntents
+        } catch (NullPointerException | PendingIntent.CanceledException e) {
             Log.e(TAG, e.getMessage());
         }
     }

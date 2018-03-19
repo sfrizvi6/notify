@@ -47,20 +47,25 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
             }
         });
         holder.mNotificationTitle.setText(notificationItemModel.getTitle());
-        holder.mNotificationText.setText(notificationItemModel.getText());
+        String text = notificationItemModel.getText();
+        holder.mNotificationText.setText(text);
+        holder.mNotificationText.setVisibility(text == null || text.equals("") || text.equals("null")
+                                               ? View.GONE
+                                               : View.VISIBLE);
         holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
         holder.mNotificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
         holder.mNotificationTextLines.setText(textLines == null ? "" : textLines);
-        holder.mNotificationTextLines.setVisibility(textLines == null || textLines.equals("")
-                                                   ? View.GONE
-                                                   : View.VISIBLE);
+        holder.mNotificationTextLines.setVisibility(textLines == null || textLines.equals("") || textLines.equals("null")
+                                                    ? View.GONE
+                                                    : View.VISIBLE);
     }
 
     private void deepLinkToApp(@NonNull final NotificationSubItemModel notificationSubItemModel) {
         try {
             notificationSubItemModel.mPendingIntent.send();
-        } catch (PendingIntent.CanceledException e) {
+            // TODO: temporarily catching NPE for sending empty PendingIntents
+        } catch (NullPointerException | PendingIntent.CanceledException e) {
             Log.e(TAG, e.getMessage());
         }
     }
