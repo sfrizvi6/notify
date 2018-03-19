@@ -65,6 +65,9 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (intent.getExtras() == null) {
+            return;
+        }
         mStatusBarNotification =
             (StatusBarNotification) intent.getExtras().get("com.example.notify.notification_created_event");
         if (mStatusBarNotification == null) {

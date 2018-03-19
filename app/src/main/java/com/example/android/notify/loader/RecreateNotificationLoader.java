@@ -1,10 +1,10 @@
 package com.example.android.notify.loader;
 
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.content.AsyncTaskLoader;
 import com.example.android.notify.data.NotificationContract.NotificationEntry;
 import com.example.android.notify.data.NotificationsDbHelper;
@@ -43,16 +43,22 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
             String category = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_NOTIFICATION_CATEGORY));
             String appName = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_NAME));
             int icon = cursor.getInt(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_ICON));
-            // TODO: figure this out
+            byte[] imageByteArray = cursor.getBlob(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_LARGE_ICON));
             Bitmap largeIcon = null;
+            if (imageByteArray != null) {
+                largeIcon = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+            }
             String packageName = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_PACKAGE_NAME));
-            // TODO: figure this out
-            PendingIntent pendingIntent = null;
+            // TODO: figure pendingIntent out; pending intent is not supposed to persist outside of the OS process
+            // because PendingIntent enclose a Binder object, they cannot be simply written to a parcel and marshalled
             String groupKey = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_GROUP_KEY));
             String title = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TITLE));
             String text = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXT));
             String timestamp = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TIMESTAMP));
             String textLinesString = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXTLINES));
+            textLinesString = textLinesString == null || textLinesString.length() < 1 || textLinesString.equals("null")
+                              ? ""
+                              : textLinesString;
 
             notificationsToRecreateList.add(new NotificationSubItemModel(getContext(),
                                                                          id,
@@ -61,7 +67,7 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
                                                                          icon,
                                                                          largeIcon,
                                                                          packageName,
-                                                                         pendingIntent,
+                                                                         null,
                                                                          groupKey,
                                                                          title,
                                                                          text,

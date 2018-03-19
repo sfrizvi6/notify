@@ -1,8 +1,15 @@
 package com.example.android.notify.data;
 
-/**
- * Created by fsyeda on 3/18/18.
- */
 
-public class DbUtils {
+import android.graphics.Bitmap;
+
+import java.io.ByteArrayOutputStream;
+
+class DbUtils {
+
+    static byte[] getBitmapAsByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
+        return outputStream.toByteArray();
+    }
 }

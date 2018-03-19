@@ -54,7 +54,7 @@ public class TestingUtils {
             .setContentTitle("5 New mails from sfrizvi6@gmail.com")
             .setContentText("Hello from the other side!")
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher_background))
+            .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_launcher_round))
             .setCategory("email")
             .setStyle(new Notification.InboxStyle()
                           .addLine("foo: bar")

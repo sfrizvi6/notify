@@ -24,7 +24,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
         NotificationEntry.COLUMN_APP_ICON + " INTEGER NOT NULL, " +
         NotificationEntry.COLUMN_APP_LARGE_ICON + " BLOB, " +
         NotificationEntry.COLUMN_APP_PACKAGE_NAME + " TEXT NOT NULL, " +
-        NotificationEntry.COLUMN_PENDING_INTENT + " BLOB, " +
+        NotificationEntry.COLUMN_PENDING_INTENT + " TEXT, " +
         NotificationEntry.COLUMN_GROUP_KEY + " TEXT NOT NULL, " +
         NotificationEntry.COLUMN_TITLE + " TEXT, " +
         NotificationEntry.COLUMN_TEXT + " TEXT, " +
@@ -63,7 +63,10 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
                                   notificationSubItemModel.mCategory.toString());
         notificationDbContent.put(NotificationEntry.COLUMN_APP_NAME, notificationSubItemModel.mAppName);
         notificationDbContent.put(NotificationEntry.COLUMN_APP_ICON, notificationSubItemModel.mAppIcon);
-        notificationDbContent.put(NotificationEntry.COLUMN_APP_LARGE_ICON, "");
+        notificationDbContent.put(NotificationEntry.COLUMN_APP_LARGE_ICON,
+                                  notificationSubItemModel.mLargeIcon == null
+                                  ? null
+                                  : DbUtils.getBitmapAsByteArray(notificationSubItemModel.mLargeIcon));
         notificationDbContent.put(NotificationEntry.COLUMN_APP_PACKAGE_NAME, notificationSubItemModel.mPackageName);
         Parcel parcel = Parcel.obtain();
         notificationSubItemModel.mPendingIntent.writeToParcel(parcel, 0);

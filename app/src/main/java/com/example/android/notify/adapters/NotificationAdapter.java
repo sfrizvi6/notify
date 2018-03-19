@@ -76,7 +76,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.mNotificationAppName.setText(notificationItemModel.mAppName);
         holder.mNotificationTitle.setText(notificationItemModel.getTitle());
         holder.mNotificationText.setText(notificationItemModel.getText());
-        holder.mNotificationCard.setCardBackgroundColor(Color.LTGRAY);
+        holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
         holder.mNotificationTimestamp.setText(notificationItemModel.getTimestamp());
         String textLines = notificationItemModel.getTextLines();
         holder.mNotificationTextLines.setText(textLines == null ? "" : textLines);
