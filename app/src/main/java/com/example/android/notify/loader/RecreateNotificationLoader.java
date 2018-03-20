@@ -56,6 +56,9 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
             String groupKey = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_GROUP_KEY));
             String title = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TITLE));
             String text = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXT));
+            text = text == null || text.length() < 1 || text.equals("null")
+                   ? ""
+                   : text;
             String timestamp = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TIMESTAMP));
             byte[] textLineBlob = cursor.getBlob(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXTLINES));
             CharSequence textLines = textLineBlob == null ? null : new String(textLineBlob, Charset.forName("UTF-8"));

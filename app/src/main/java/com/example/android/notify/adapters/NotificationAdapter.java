@@ -79,8 +79,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.mNotificationAppName.setText(notificationItemModel.mAppName);
         holder.mNotificationTitle.setText(notificationItemModel.getTitle());
         String text = notificationItemModel.getText();
-        holder.mNotificationText.setText(text);
-        holder.mNotificationText.setVisibility(text == null || text.equals("") || text.equals("null")
+        holder.mNotificationText.setText(text == null ? "" : text);
+        holder.mNotificationText.setVisibility(text == null || text.equals("")
                                                ? View.GONE
                                                : View.VISIBLE);
         holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
@@ -122,9 +122,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                : mContext.getString(R.string.show_more_btn_label));
 
         TextView textLinesTextView = ((View) showMoreButton.getParent()).findViewById(R.id.notification_text_lines);
-        //                textLinesTextView.setVisibility(isShowMoreVisible
-        //                                                ? View.VISIBLE
-        //                                                : View.GONE);
         Animation animationUp = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_up);
         Animation animationDown = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_down);
         if (isShowMoreVisible) {

@@ -48,15 +48,15 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
         });
         holder.mNotificationTitle.setText(notificationItemModel.getTitle());
         String text = notificationItemModel.getText();
-        holder.mNotificationText.setText(text);
-        holder.mNotificationText.setVisibility(text == null || text.equals("") || text.equals("null")
+        holder.mNotificationText.setText(text == null ? "" : text);
+        holder.mNotificationText.setVisibility(text == null || text.equals("")
                                                ? View.GONE
                                                : View.VISIBLE);
         holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
         holder.mNotificationTimestamp.setText(notificationItemModel.getTimestamp());
         CharSequence textLines = notificationItemModel.getTextLines();
         holder.mNotificationTextLines.setText(textLines == null ? "" : textLines);
-        holder.mNotificationTextLines.setVisibility(textLines == null || textLines.equals("") || textLines.equals("null")
+        holder.mNotificationTextLines.setVisibility(textLines == null || textLines.equals("")
                                                     ? View.GONE
                                                     : View.VISIBLE);
     }
