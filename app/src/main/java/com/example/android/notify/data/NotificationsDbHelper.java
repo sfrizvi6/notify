@@ -30,7 +30,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
         NotificationEntry.COLUMN_TITLE + " TEXT, " +
         NotificationEntry.COLUMN_TEXT + " TEXT, " +
         NotificationEntry.COLUMN_TIMESTAMP + " TEXT NOT NULL, " +
-        NotificationEntry.COLUMN_TEXTLINES + " TEXT, " +
+        NotificationEntry.COLUMN_TEXTLINES + " BLOB, " +
                 /*
                  * UNIQUE constraint on the date column to replace on conflict
                  * to ensure this table can only contain one notification
@@ -66,18 +66,19 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
         notificationDbContent.put(NotificationEntry.COLUMN_APP_ICON, notificationSubItemModel.mAppIcon);
         notificationDbContent.put(NotificationEntry.COLUMN_APP_ICON_COLOR, notificationSubItemModel.mColor);
         notificationDbContent.put(NotificationEntry.COLUMN_APP_LARGE_ICON,
-                                  notificationSubItemModel.mLargeIcon == null
-                                  ? null
-                                  : DbUtils.getBitmapAsByteArray(notificationSubItemModel.mLargeIcon));
+                                  DbUtils.getBitmapAsByteArray(notificationSubItemModel.mLargeIcon));
         notificationDbContent.put(NotificationEntry.COLUMN_APP_PACKAGE_NAME, notificationSubItemModel.mPackageName);
         Parcel parcel = Parcel.obtain();
-        notificationSubItemModel.mPendingIntent.writeToParcel(parcel, 0);
+        if (notificationSubItemModel.mPendingIntent != null) {
+            notificationSubItemModel.mPendingIntent.writeToParcel(parcel, 0);
+        }
         notificationDbContent.put(NotificationEntry.COLUMN_PENDING_INTENT, parcel.createByteArray());
         notificationDbContent.put(NotificationEntry.COLUMN_GROUP_KEY, notificationSubItemModel.mGroupKey);
         notificationDbContent.put(NotificationEntry.COLUMN_TITLE, notificationSubItemModel.getTitle());
         notificationDbContent.put(NotificationEntry.COLUMN_TEXT, notificationSubItemModel.getText());
         notificationDbContent.put(NotificationEntry.COLUMN_TIMESTAMP, notificationSubItemModel.getTimestamp());
-        notificationDbContent.put(NotificationEntry.COLUMN_TEXTLINES, notificationSubItemModel.getTextLines());
+        notificationDbContent.put(NotificationEntry.COLUMN_TEXTLINES,
+                                  DbUtils.getCharSequenceAsByteArray(notificationSubItemModel.getTextLines()));
         mDb.insert(TABLE_NAME, null, notificationDbContent);
     }
 

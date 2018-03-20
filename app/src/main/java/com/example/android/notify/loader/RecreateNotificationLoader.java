@@ -11,6 +11,7 @@ import com.example.android.notify.data.NotificationsDbHelper;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
 import com.example.android.notify.utils.NotificationCategory;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,10 +57,11 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
             String title = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TITLE));
             String text = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXT));
             String timestamp = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TIMESTAMP));
-            String textLinesString = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXTLINES));
-            textLinesString = textLinesString == null || textLinesString.length() < 1 || textLinesString.equals("null")
-                              ? ""
-                              : textLinesString;
+            byte[] textLineBlob = cursor.getBlob(cursor.getColumnIndex(NotificationEntry.COLUMN_TEXTLINES));
+            CharSequence textLines = textLineBlob == null ? null : new String(textLineBlob, Charset.forName("UTF-8"));
+            textLines = textLines == null || textLines.length() < 1 || textLines.equals("null")
+                        ? ""
+                        : textLines;
 
             notificationsToRecreateList.add(new NotificationSubItemModel(getContext(),
                                                                          id,
@@ -74,7 +76,7 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
                                                                          title,
                                                                          text,
                                                                          timestamp,
-                                                                         textLinesString));
+                                                                         textLines));
         }
         return notificationsToRecreateList;
     }

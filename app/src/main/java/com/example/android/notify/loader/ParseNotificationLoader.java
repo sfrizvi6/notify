@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.content.AsyncTaskLoader;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import com.example.android.notify.data.NotificationsDbHelper;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
@@ -56,14 +57,17 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
              * java.lang.ClassCastException: android.text.SpannableString cannot be cast to java.lang.String
              */
         String text = String.valueOf(extras.get("android.text"));
-        CharSequence[] textLines = (CharSequence[]) extras.get("android.textLines");
-
-        StringBuilder textLinesString = new StringBuilder();
-        if (textLines != null) {
-            for (int i = 0; i < textLines.length; i++) {
-                textLinesString.append(textLines[i]).append(i < textLines.length - 1 ? "\n" : "");
+        CharSequence textLines = null;
+        CharSequence[] textLinesCharSequenceArray = (CharSequence[]) extras.get("android.textLines");
+        // TODO: convert this to RV later instead of adding '\n' to end of every string
+        if (textLinesCharSequenceArray != null) {
+            for (int i = 0; i < textLinesCharSequenceArray.length; i++) {
+                CharSequence[] array = { textLinesCharSequenceArray[i], "\n" };
+                textLinesCharSequenceArray[i] = TextUtils.concat(array);
             }
+            textLines = TextUtils.concat(textLinesCharSequenceArray);
         }
+
         int icon = extras.getInt("android.icon");
         int color = notification.color;
         Bitmap largeIcon = (Bitmap) extras.get("android.largeIcon");
@@ -83,7 +87,7 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
                                             title,
                                             text,
                                             timestamp,
-                                            textLinesString.toString());
+                                            textLines);
     }
 
     public void deliverResult(NotificationSubItemModel parsedNotificationSubItemModel) {

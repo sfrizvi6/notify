@@ -54,7 +54,7 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
                                                : View.VISIBLE);
         holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
         holder.mNotificationTimestamp.setText(notificationItemModel.getTimestamp());
-        String textLines = notificationItemModel.getTextLines();
+        CharSequence textLines = notificationItemModel.getTextLines();
         holder.mNotificationTextLines.setText(textLines == null ? "" : textLines);
         holder.mNotificationTextLines.setVisibility(textLines == null || textLines.equals("") || textLines.equals("null")
                                                     ? View.GONE
