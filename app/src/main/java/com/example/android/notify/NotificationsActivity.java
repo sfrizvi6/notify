@@ -59,7 +59,7 @@ public class NotificationsActivity extends AppCompatActivity {
         mDbHelper = new NotificationsDbHelper(this);
 
         // TODO: for testing only
-        mDbHelper.cleanInitDb();
+        // mDbHelper.cleanInitDb();
 
         mNotificationReceiver =
             new NotificationReceiver(this, getSupportLoaderManager(), mDbHelper, mAdapter);
