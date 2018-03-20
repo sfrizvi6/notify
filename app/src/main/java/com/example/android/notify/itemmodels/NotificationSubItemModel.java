@@ -12,6 +12,7 @@ public class NotificationSubItemModel {
     public final NotificationCategory mCategory;
     public final String mAppName;
     public final int mAppIcon;
+    public final int mColor;
     public final Bitmap mLargeIcon;
     public final String mPackageName;
     public final PendingIntent mPendingIntent;
@@ -58,7 +59,7 @@ public class NotificationSubItemModel {
                                     NotificationCategory category,
                                     String appName,
                                     int appIcon,
-                                    Bitmap largeIcon,
+                                    int color, Bitmap largeIcon,
                                     String packageName,
                                     PendingIntent pendingIntent,
                                     String groupKey,
@@ -71,6 +72,7 @@ public class NotificationSubItemModel {
         this.mCategory = category;
         this.mAppName = appName;
         this.mAppIcon = appIcon;
+        this.mColor = color;
         this.mLargeIcon = largeIcon;
         this.mPackageName = packageName;
         this.mPendingIntent = pendingIntent;

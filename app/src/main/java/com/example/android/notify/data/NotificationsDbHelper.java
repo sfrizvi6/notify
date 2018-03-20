@@ -22,6 +22,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
         NotificationEntry.COLUMN_NOTIFICATION_CATEGORY + " TEXT NOT NULL, " +
         NotificationEntry.COLUMN_APP_NAME + " TEXT NOT NULL," +
         NotificationEntry.COLUMN_APP_ICON + " INTEGER NOT NULL, " +
+        NotificationEntry.COLUMN_APP_ICON_COLOR + " INTEGER NOT NULL, " +
         NotificationEntry.COLUMN_APP_LARGE_ICON + " BLOB, " +
         NotificationEntry.COLUMN_APP_PACKAGE_NAME + " TEXT NOT NULL, " +
         NotificationEntry.COLUMN_PENDING_INTENT + " TEXT, " +
@@ -63,6 +64,7 @@ public class NotificationsDbHelper extends SQLiteOpenHelper {
                                   notificationSubItemModel.mCategory.toString());
         notificationDbContent.put(NotificationEntry.COLUMN_APP_NAME, notificationSubItemModel.mAppName);
         notificationDbContent.put(NotificationEntry.COLUMN_APP_ICON, notificationSubItemModel.mAppIcon);
+        notificationDbContent.put(NotificationEntry.COLUMN_APP_ICON_COLOR, notificationSubItemModel.mColor);
         notificationDbContent.put(NotificationEntry.COLUMN_APP_LARGE_ICON,
                                   notificationSubItemModel.mLargeIcon == null
                                   ? null

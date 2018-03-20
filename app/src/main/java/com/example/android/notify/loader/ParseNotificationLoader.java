@@ -1,6 +1,7 @@
 package com.example.android.notify.loader;
 
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -34,7 +35,8 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
 
     @Override
     public NotificationSubItemModel loadInBackground() {
-        Bundle extras = mStatusBarNotification.getNotification().extras;
+        Notification notification = mStatusBarNotification.getNotification();
+        Bundle extras = notification.extras;
 
         String packageName = mStatusBarNotification.getPackageName();
         if (packageName == null || packageName.equals("")) {
@@ -44,9 +46,9 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
         String groupKey = mStatusBarNotification.getGroupKey();
         ApplicationInfo appInfo = (ApplicationInfo) extras.get("android.appInfo");
         PackageManager packageManager = getContext().getApplicationContext().getPackageManager();
-        String category = mStatusBarNotification.getNotification().category;
+        String category = notification.category;
         String appName = packageManager.getApplicationLabel(appInfo).toString();
-        PendingIntent deepLinkIntent = mStatusBarNotification.getNotification().contentIntent;
+        PendingIntent deepLinkIntent = notification.contentIntent;
         String title = extras.getString("android.title");
             /*
              * TODO: Key android.text expected String but value was a android.text.SpannableString.
@@ -63,6 +65,7 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
             }
         }
         int icon = extras.getInt("android.icon");
+        int color = notification.color;
         Bitmap largeIcon = (Bitmap) extras.get("android.largeIcon");
         int notificationId = mStatusBarNotification.getId();
         String timestamp = DateUtils.formatDateTime(getContext(),
@@ -72,6 +75,7 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
                                             NotificationCategory.getCategory(category),
                                             appName,
                                             icon,
+                                            color,
                                             largeIcon,
                                             packageName,
                                             deepLinkIntent,

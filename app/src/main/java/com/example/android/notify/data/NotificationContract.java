@@ -12,6 +12,7 @@ public class NotificationContract {
         public static final String COLUMN_NOTIFICATION_CATEGORY = "notification_category";
         public static final String COLUMN_APP_NAME = "app_name";
         public static final String COLUMN_APP_ICON = "app_icon";
+        public static final String COLUMN_APP_ICON_COLOR = "app_icon_color";
         public static final String COLUMN_APP_LARGE_ICON = "app_large_icon";
         public static final String COLUMN_APP_PACKAGE_NAME = "app_package_name";
         public static final String COLUMN_PENDING_INTENT = "pending_intent";

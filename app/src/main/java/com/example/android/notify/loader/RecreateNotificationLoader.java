@@ -43,6 +43,7 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
             String category = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_NOTIFICATION_CATEGORY));
             String appName = cursor.getString(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_NAME));
             int icon = cursor.getInt(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_ICON));
+            int color = cursor.getInt(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_ICON_COLOR));
             byte[] imageByteArray = cursor.getBlob(cursor.getColumnIndex(NotificationEntry.COLUMN_APP_LARGE_ICON));
             Bitmap largeIcon = null;
             if (imageByteArray != null) {
@@ -65,6 +66,7 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
                                                                          NotificationCategory.getCategory(category),
                                                                          appName,
                                                                          icon,
+                                                                         color,
                                                                          largeIcon,
                                                                          packageName,
                                                                          null,

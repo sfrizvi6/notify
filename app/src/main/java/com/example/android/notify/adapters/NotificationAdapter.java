@@ -56,7 +56,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             Resources res =
                 mContext.getPackageManager().getResourcesForApplication(notificationItemModel.mPackageName);
             Drawable icon = res.getDrawable(notificationItemModel.mAppIcon);
-            holder.mNotificationImage.setImageDrawable(icon);
+            holder.mNotificationAppIcon.setImageDrawable(icon);
+            holder.mNotificationAppIcon.setColorFilter(notificationItemModel.mColor);
         } catch (Resources.NotFoundException | PackageManager.NameNotFoundException e) {
             Log.e(TAG, e.getMessage());
         }
@@ -143,7 +144,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     class NotificationViewHolder extends RecyclerView.ViewHolder {
 
         CardView mNotificationCard;
-        ImageView mNotificationImage;
+        ImageView mNotificationAppIcon;
         TextView mNotificationAppName;
         TextView mNotificationTitle;
         TextView mNotificationText;
@@ -155,7 +156,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         NotificationViewHolder(View itemView) {
             super(itemView);
             mNotificationCard = itemView.findViewById(R.id.notification_card);
-            mNotificationImage = itemView.findViewById(R.id.notification_image);
+            mNotificationAppIcon = itemView.findViewById(R.id.notification_image);
             mNotificationAppName = itemView.findViewById(R.id.notification_app_name);
             mNotificationTitle = itemView.findViewById(R.id.notification_title);
             mNotificationText = itemView.findViewById(R.id.notification_text);
