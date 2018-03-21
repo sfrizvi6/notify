@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.android.notify.R;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
+import com.example.android.notify.utils.TextViewUtils;
 
 import java.util.List;
 
@@ -46,19 +47,12 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
                 deepLinkToApp(notificationItemModel);
             }
         });
-        holder.mNotificationTitle.setText(notificationItemModel.getTitle());
-        String text = notificationItemModel.getText();
-        holder.mNotificationText.setText(text == null ? "" : text);
-        holder.mNotificationText.setVisibility(text == null || text.equals("")
-                                               ? View.GONE
-                                               : View.VISIBLE);
+        TextViewUtils.setTextAndVisibility(holder.mNotificationTitle, notificationItemModel.getTitle());
+        TextViewUtils.setTextAndVisibility(holder.mNotificationText, notificationItemModel.getText());
         holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
-        holder.mNotificationTimestamp.setText(notificationItemModel.getTimestamp());
+        TextViewUtils.setTextAndVisibility(holder.mNotificationTimestamp, notificationItemModel.getTimestamp());
         CharSequence textLines = notificationItemModel.getTextLines();
-        holder.mNotificationTextLines.setText(textLines == null ? "" : textLines);
-        holder.mNotificationTextLines.setVisibility(textLines == null || textLines.equals("")
-                                                    ? View.GONE
-                                                    : View.VISIBLE);
+        TextViewUtils.setTextAndVisibility(holder.mNotificationTextLines, textLines);
     }
 
     private void deepLinkToApp(@NonNull final NotificationSubItemModel notificationSubItemModel) {

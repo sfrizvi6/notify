@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.android.notify.R;
 import com.example.android.notify.itemmodels.NotificationItemModel;
+import com.example.android.notify.utils.TextViewUtils;
 
 import java.util.List;
 
@@ -76,18 +77,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 deepLinkToApp(notificationItemModel);
             }
         });
-        holder.mNotificationAppName.setText(notificationItemModel.mAppName);
-        holder.mNotificationTitle.setText(notificationItemModel.getTitle());
-        String text = notificationItemModel.getText();
-        holder.mNotificationText.setText(text == null ? "" : text);
-        holder.mNotificationText.setVisibility(text == null || text.equals("")
-                                               ? View.GONE
-                                               : View.VISIBLE);
         holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
-        holder.mNotificationTimestamp.setText(notificationItemModel.getTimestamp());
+        TextViewUtils.setTextAndVisibility(holder.mNotificationAppName, notificationItemModel.mAppName);
+        TextViewUtils.setTextAndVisibility(holder.mNotificationTitle, notificationItemModel.getTitle());
+        TextViewUtils.setTextAndVisibility(holder.mNotificationText, notificationItemModel.getText());
+        TextViewUtils.setTextAndVisibility(holder.mNotificationTimestamp, notificationItemModel.getTimestamp());
         CharSequence textLines = notificationItemModel.getTextLines();
-        holder.mNotificationTextLines.setText(textLines == null ? "" : textLines);
-        holder.mNotificationTextLines.setVisibility(View.GONE);
+        TextViewUtils.setTextAndVisibility(holder.mNotificationTextLines, textLines);
         holder.mNotificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,
                                                                                       RecyclerView.VERTICAL,
                                                                                       false));
