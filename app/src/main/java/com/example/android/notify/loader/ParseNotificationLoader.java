@@ -61,7 +61,7 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
         CharSequence[] textLinesCharSequenceArray = (CharSequence[]) extras.get("android.textLines");
         // TODO: convert this to RV later instead of adding '\n' to end of every string
         if (textLinesCharSequenceArray != null) {
-            for (int i = 0; i < textLinesCharSequenceArray.length; i++) {
+            for (int i = 0; i < textLinesCharSequenceArray.length - 1; i++) {
                 CharSequence[] array = { textLinesCharSequenceArray[i], "\n" };
                 textLinesCharSequenceArray[i] = TextUtils.concat(array);
             }
