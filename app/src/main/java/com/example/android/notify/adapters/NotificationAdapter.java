@@ -37,6 +37,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private List<NotificationItemModel> mNotificationList;
     private Context mContext;
+    private Animation mAnimationUp;
+    private Animation mAnimationDown;
 
     public NotificationAdapter(List<NotificationItemModel> notificationList) {
         this.mNotificationList = notificationList;
@@ -46,6 +48,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
+        mAnimationUp = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_up);
+        mAnimationDown = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_down);
         return new NotificationViewHolder(LayoutInflater.from(parent.getContext())
                                                         .inflate(R.layout.notification_item, parent, false));
     }
@@ -85,6 +89,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         CharSequence textLines = notificationItemModel.getTextLines();
         holder.mNotificationTextLines.setText(textLines);
         holder.mNotificationTextLines.setVisibility(View.GONE);
+        holder.mNotificationTextLines.setAnimation(mAnimationUp);
         holder.mNotificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,
                                                                                       RecyclerView.VERTICAL,
                                                                                       false));
@@ -120,14 +125,12 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                : mContext.getString(R.string.show_more_btn_label));
 
         TextView textLinesTextView = ((View) showMoreButton.getParent()).findViewById(R.id.notification_text_lines);
-        Animation animationUp = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_up);
-        Animation animationDown = AnimationUtils.loadAnimation(mContext.getApplicationContext(), R.anim.slide_down);
         if (isShowMoreVisible) {
             textLinesTextView.setVisibility(View.VISIBLE);
-            textLinesTextView.setAnimation(animationDown);
+            textLinesTextView.startAnimation(mAnimationDown);
         } else {
             textLinesTextView.setVisibility(View.GONE);
-            textLinesTextView.setAnimation(animationUp);
+            textLinesTextView.startAnimation(mAnimationUp);
         }
     }
 
