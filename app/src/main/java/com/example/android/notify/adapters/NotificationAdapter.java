@@ -83,7 +83,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         TextViewUtils.setTextAndVisibility(holder.mNotificationText, notificationItemModel.getText());
         TextViewUtils.setTextAndVisibility(holder.mNotificationTimestamp, notificationItemModel.getTimestamp());
         CharSequence textLines = notificationItemModel.getTextLines();
-        TextViewUtils.setTextAndVisibility(holder.mNotificationTextLines, textLines);
+        holder.mNotificationTextLines.setText(textLines);
+        holder.mNotificationTextLines.setVisibility(View.GONE);
         holder.mNotificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,
                                                                                       RecyclerView.VERTICAL,
                                                                                       false));
@@ -91,6 +92,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.nShowMore.setVisibility(textLines == null || textLines.equals("")
                                        ? View.GONE
                                        : View.VISIBLE);
+        holder.nShowMore.setText(mContext.getString(R.string.show_more_btn_label));
     }
 
     @Override
