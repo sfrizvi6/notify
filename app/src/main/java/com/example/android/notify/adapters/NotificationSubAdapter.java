@@ -2,9 +2,11 @@ package com.example.android.notify.adapters;
 
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,14 +25,16 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
     private static final String TAG = NotificationSubAdapter.class.getSimpleName();
 
     private List<NotificationSubItemModel> mNotificationList;
+    private Context mContext;
 
     public NotificationSubAdapter(List<NotificationSubItemModel> notificationList) {
-        this.mNotificationList = notificationList;
+        mNotificationList = notificationList;
     }
 
     @NonNull
     @Override
     public NotificationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        mContext = parent.getContext();
         return new NotificationViewHolder(LayoutInflater.from(parent.getContext())
                                                         .inflate(R.layout.notification_sub_item, parent, false));
     }
@@ -51,8 +55,10 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
         TextViewUtils.setTextAndVisibility(holder.mNotificationText, notificationItemModel.getText());
         holder.mNotificationCard.setCardBackgroundColor(Color.WHITE);
         TextViewUtils.setTextAndVisibility(holder.mNotificationTimestamp, notificationItemModel.getTimestamp());
-        CharSequence textLines = notificationItemModel.getTextLines();
-        TextViewUtils.setTextAndVisibility(holder.mNotificationTextLines, textLines);
+        holder.mNotificationTextLines.setAdapter(new TextLinesAdapter(notificationItemModel.getTextLines()));
+        holder.mNotificationTextLines.setLayoutManager(new LinearLayoutManager(mContext,
+                                                                               RecyclerView.VERTICAL,
+                                                                               false));
     }
 
     private void deepLinkToApp(@NonNull final NotificationSubItemModel notificationSubItemModel) {
@@ -76,7 +82,7 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
         TextView mNotificationTitle;
         TextView mNotificationText;
         TextView mNotificationTimestamp;
-        TextView mNotificationTextLines;
+        RecyclerView mNotificationTextLines;
 
         NotificationViewHolder(View itemView) {
             super(itemView);
@@ -85,7 +91,7 @@ public class NotificationSubAdapter extends RecyclerView.Adapter<NotificationSub
             mNotificationTitle = itemView.findViewById(R.id.notification_sub_title);
             mNotificationText = itemView.findViewById(R.id.notification_sub_text);
             mNotificationTimestamp = itemView.findViewById(R.id.notification_sub_timestamp);
-            mNotificationTextLines = itemView.findViewById(R.id.notification_sub_text_lines);
+            mNotificationTextLines = itemView.findViewById(R.id.notification_sub_text_lines_recycler_view);
         }
     }
 }

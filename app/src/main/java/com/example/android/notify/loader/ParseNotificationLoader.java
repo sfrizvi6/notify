@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.content.AsyncTaskLoader;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import com.example.android.notify.data.NotificationsDbHelper;
 import com.example.android.notify.itemmodels.NotificationSubItemModel;
@@ -59,14 +58,6 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
         String text = String.valueOf(extras.get("android.text"));
         CharSequence textLines = null;
         CharSequence[] textLinesCharSequenceArray = (CharSequence[]) extras.get("android.textLines");
-        // TODO: convert this to RV later instead of adding '\n' to end of every string
-        if (textLinesCharSequenceArray != null) {
-            for (int i = 0; i < textLinesCharSequenceArray.length - 1; i++) {
-                CharSequence[] array = { textLinesCharSequenceArray[i], "\n" };
-                textLinesCharSequenceArray[i] = TextUtils.concat(array);
-            }
-            textLines = TextUtils.concat(textLinesCharSequenceArray);
-        }
 
         int icon = extras.getInt("android.icon");
         int color = notification.color;
@@ -87,7 +78,7 @@ public class ParseNotificationLoader extends AsyncTaskLoader<NotificationSubItem
                                             title,
                                             text,
                                             timestamp,
-                                            textLines);
+                                            textLinesCharSequenceArray);
     }
 
     public void deliverResult(NotificationSubItemModel parsedNotificationSubItemModel) {

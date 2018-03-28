@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -86,15 +87,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         TextViewUtils.setTextAndVisibility(holder.mNotificationTitle, notificationItemModel.getTitle());
         TextViewUtils.setTextAndVisibility(holder.mNotificationText, notificationItemModel.getText());
         TextViewUtils.setTextAndVisibility(holder.mNotificationTimestamp, notificationItemModel.getTimestamp());
-        CharSequence textLines = notificationItemModel.getTextLines();
-        holder.mNotificationTextLines.setText(textLines);
+
+        holder.mNotificationTextLines.setLayoutManager(new LinearLayoutManager(mContext,
+                                                                               RecyclerView.VERTICAL,
+                                                                               false));
+        CharSequence[] textLines = notificationItemModel.getTextLines();
+        CharSequence textLinesString = textLines == null ? null : TextUtils.concat(textLines);
+        holder.mNotificationTextLines.setAdapter(textLinesString.equals("")
+                                                 ? null
+                                                 : new TextLinesAdapter(textLines));
         holder.mNotificationTextLines.setVisibility(View.GONE);
-        holder.mNotificationTextLines.setAnimation(mAnimationUp);
+        //        holder.mNotificationTextLines.setAnimation(mAnimationUp);
         holder.mNotificationsSubRecyclerView.setLayoutManager(new LinearLayoutManager(mContext,
                                                                                       RecyclerView.VERTICAL,
                                                                                       false));
         holder.mNotificationsSubRecyclerView.setAdapter(notificationItemModel.getSubAdapter());
-        holder.nShowMore.setVisibility(textLines == null || textLines.equals("")
+        holder.nShowMore.setVisibility(textLinesString.equals("")
                                        ? View.GONE
                                        : View.VISIBLE);
         holder.nShowMore.setText(mContext.getString(R.string.show_more_btn_label));
@@ -124,13 +132,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                                ? mContext.getString(R.string.show_less_btn_label)
                                : mContext.getString(R.string.show_more_btn_label));
 
-        TextView textLinesTextView = ((View) showMoreButton.getParent()).findViewById(R.id.notification_text_lines);
+        RecyclerView textLinesRecyclerView =
+            ((View) showMoreButton.getParent()).findViewById(R.id.notification_text_lines_recycler_view);
         if (isShowMoreVisible) {
-            textLinesTextView.setVisibility(View.VISIBLE);
-            textLinesTextView.startAnimation(mAnimationDown);
+            textLinesRecyclerView.setVisibility(View.VISIBLE);
+            //            textLinesRecyclerView.startAnimation(mAnimationDown);
         } else {
-            textLinesTextView.setVisibility(View.GONE);
-            textLinesTextView.startAnimation(mAnimationUp);
+            textLinesRecyclerView.setVisibility(View.GONE);
+            //            textLinesRecyclerView.startAnimation(mAnimationUp);
         }
     }
 
@@ -152,7 +161,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         TextView mNotificationText;
         TextView mNotificationTimestamp;
         Button nShowMore;
-        TextView mNotificationTextLines;
+        RecyclerView mNotificationTextLines;
         RecyclerView mNotificationsSubRecyclerView;
 
         NotificationViewHolder(View itemView) {
@@ -164,7 +173,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             mNotificationText = itemView.findViewById(R.id.notification_text);
             mNotificationTimestamp = itemView.findViewById(R.id.notification_timestamp);
             nShowMore = itemView.findViewById(R.id.notification_see_more);
-            mNotificationTextLines = itemView.findViewById(R.id.notification_text_lines);
+            mNotificationTextLines = itemView.findViewById(R.id.notification_text_lines_recycler_view);
             mNotificationsSubRecyclerView = itemView.findViewById(R.id.notification_sub_list);
         }
     }

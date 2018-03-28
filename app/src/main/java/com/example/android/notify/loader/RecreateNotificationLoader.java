@@ -66,6 +66,8 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
                         ? ""
                         : textLines;
 
+            CharSequence[] textLineArray = textLines.toString().split("\n");
+
             notificationsToRecreateList.add(new NotificationSubItemModel(getContext(),
                                                                          id,
                                                                          NotificationCategory.getCategory(category),
@@ -79,7 +81,7 @@ public class RecreateNotificationLoader extends AsyncTaskLoader<List<Notificatio
                                                                          title,
                                                                          text,
                                                                          timestamp,
-                                                                         textLines));
+                                                                         textLineArray));
         }
         return notificationsToRecreateList;
     }

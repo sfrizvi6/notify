@@ -59,6 +59,7 @@ public class TestingUtils {
             .setStyle(new Notification.InboxStyle()
                           .addLine("foo: bar")
                           .addLine("blah: blah blah")
+                          .addLine("smith: blah blah")
                           .setSummaryText("+3 more"))
             .setContentIntent(PendingIntent.getActivity(mContext,
                                                         0,

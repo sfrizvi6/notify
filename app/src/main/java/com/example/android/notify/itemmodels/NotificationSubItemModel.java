@@ -20,7 +20,7 @@ public class NotificationSubItemModel {
     private String mTitle;
     private String mText;
     private String mTimestamp;
-    private CharSequence mTextLines;
+    private CharSequence[] mTextLines;
 
     public String getTitle() {
         return mTitle;
@@ -46,11 +46,11 @@ public class NotificationSubItemModel {
         this.mTimestamp = timestamp;
     }
 
-    public CharSequence getTextLines() {
+    public CharSequence[] getTextLines() {
         return mTextLines;
     }
 
-    public void setTextLines(CharSequence textLines) {
+    public void setTextLines(CharSequence[] textLines) {
         this.mTextLines = textLines;
     }
 
@@ -67,7 +67,7 @@ public class NotificationSubItemModel {
                                     String title,
                                     String text,
                                     String timestamp,
-                                    CharSequence textLines) {
+                                    CharSequence[] textLines) {
         this.mContext = context;
         this.mId = id;
         this.mCategory = category;

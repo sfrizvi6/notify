@@ -70,21 +70,19 @@
                 app:layout_constraintTop_toBottomOf="@id/notification_title"
                 tools:text="You just won a million dollars!"/>
 
-            <TextView
-                android:id="@+id/notification_text_lines"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/notification_text_lines_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/notification_text"
-                tools:text="sfrizvi6: liked your comment!"
-                tools:visibility="visible"/>
+                app:layout_constraintTop_toBottomOf="@id/notification_text">
+            </android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/notification_sub_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/notification_text_lines">
+                app:layout_constraintTop_toBottomOf="@+id/notification_text_lines_recycler_view">
             </android.support.v7.widget.RecyclerView>
 
             <Button

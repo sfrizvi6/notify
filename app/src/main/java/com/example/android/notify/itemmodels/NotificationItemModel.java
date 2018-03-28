@@ -28,7 +28,7 @@ public class NotificationItemModel extends NotificationSubItemModel {
                                  String title,
                                  String text,
                                  String timestamp,
-                                 CharSequence textLines) {
+                                 CharSequence[] textLines) {
         super(context,
               id,
               NotificationCategory.getCategory(category),
