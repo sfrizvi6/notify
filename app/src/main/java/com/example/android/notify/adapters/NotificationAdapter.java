@@ -32,10 +32,6 @@ import static android.content.ContentValues.TAG;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
-    public List<NotificationItemModel> getNotificationList() {
-        return mNotificationList;
-    }
-
     private List<NotificationItemModel> mNotificationList;
     private Context mContext;
     private Animation mAnimationUp;
@@ -111,6 +107,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public int getItemCount() {
         return mNotificationList == null ? 0 : mNotificationList.size();
+    }
+
+    public List<NotificationItemModel> getNotificationList() {
+        return mNotificationList;
     }
 
     public void addNotification(NotificationItemModel newNotificationItemModel) {
